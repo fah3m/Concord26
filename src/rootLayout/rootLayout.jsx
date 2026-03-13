@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 export default function RootLayout() {
   return (
     <div>
-        <Navbar></Navbar>
+        <Navbar />
 
       <main>
         {/* Outlet = where child routes render */}
