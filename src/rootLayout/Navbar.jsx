@@ -29,7 +29,7 @@ export default function Navbar() {
             onMouseLeave={() => setLogoHovered(false)}
           >
             <motion.img
-              src="logo.png"
+              src="logo.svg"
               alt="logo"
               className="absolute inset-0 w-full h-full rounded-full object-cover"
               animate={{ y: logoHovered ? "100%" : "0%" }}
