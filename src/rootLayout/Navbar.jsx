@@ -110,7 +110,7 @@ export default function Navbar() {
             {/* Logo */}
             <div className="relative w-10 h-10 shrink-0 overflow-hidden rounded-full">
               <img
-                src="logo.png"
+                src="logo.svg"
                 alt="logo"
                 className="w-full h-full rounded-full object-cover"
               />
