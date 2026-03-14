@@ -7,10 +7,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import Home from "./pages/Home.jsx";
+import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import RootLayout from "./rootLayout/RootLayout.jsx";
+import RootLayout from "./rootLayout/RootLayout";
 
 function App() {
   const router = createBrowserRouter(
