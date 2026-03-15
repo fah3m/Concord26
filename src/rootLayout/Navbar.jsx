@@ -34,6 +34,7 @@ export default function Navbar() {
               className="absolute inset-0 w-full h-full rounded-full object-cover"
               animate={{ y: logoHovered ? "100%" : "0%" }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              draggable="false"
             />
             <motion.img
               src="26.png"
@@ -41,6 +42,7 @@ export default function Navbar() {
               className="absolute inset-0 w-full h-full rounded-full object-cover"
               animate={{ y: logoHovered ? "0%" : "-100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              draggable="false"
             />
           </div>
 
