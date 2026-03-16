@@ -10,17 +10,10 @@ const links = [
 ];
 
 function scrollToId(id) {
-  let attempts = 0;
-  const tryScroll = () => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    } else if (attempts < 20) {
-      attempts++;
-      setTimeout(tryScroll, 50);
-    }
-  };
-  tryScroll();
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top, behavior: "smooth" });
 }
 
 export default function Navbar() {
@@ -43,7 +36,7 @@ export default function Navbar() {
     if (pendingScroll.current) {
       const target = pendingScroll.current;
       pendingScroll.current = null;
-      scrollToId(target);
+      setTimeout(() => scrollToId(target), 100);
     }
     const sections = ["home", "about"];
     const observers = [];
@@ -54,7 +47,7 @@ export default function Navbar() {
         ([entry]) => {
           if (entry.isIntersecting) setActiveSection(id);
         },
-        { threshold: 0.4 },
+        { threshold: 0.55 },
       );
       observer.observe(el);
       observers.push(observer);
@@ -70,28 +63,29 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    const idx = getActiveLinkIndex();
-    const el = linkRefs.current[idx];
-    const nav = navRef.current;
-    if (!el || !nav) return;
-
-    // Measure relative to the nav container, not the page
-    const navRect = nav.getBoundingClientRect();
-    const elRect = el.getBoundingClientRect();
-    setPillStyle({
-      left: elRect.left - navRect.left,
-      width: elRect.width,
+    requestAnimationFrame(() => {
+      const idx = getActiveLinkIndex();
+      const el = linkRefs.current[idx];
+      const nav = navRef.current;
+      if (!el || !nav) return;
+      let left = 0;
+      let node = el;
+      while (node && node !== nav) {
+        left += node.offsetLeft;
+        node = node.offsetParent;
+      }
+      setPillStyle({ left, width: el.offsetWidth });
     });
   }, [location.pathname, activeSection]);
 
   const handleNav = (link) => {
-    setMenuOpen(false);
     if (!link.scrollTo) return;
+    setMenuOpen(false);
     if (location.pathname !== "/") {
       pendingScroll.current = link.scrollTo;
       navigate("/");
     } else {
-      scrollToId(link.scrollTo);
+      setTimeout(() => scrollToId(link.scrollTo), 300);
     }
   };
 
@@ -116,14 +110,12 @@ export default function Navbar() {
           ref={navRef}
           className="relative flex items-center gap-1 bg-black/70 rounded-full px-3 py-2 shadow-xl shadow-black/20"
         >
-          {/* Floating pill */}
           <motion.span
             className="absolute top-2 bottom-2 bg-white rounded-full pointer-events-none"
             animate={{ left: pillStyle.left, width: pillStyle.width }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
           />
 
-          {/* Logo */}
           <div
             className="relative w-12 h-12 mr-4 shrink-0 cursor-pointer overflow-hidden rounded-full"
             onMouseEnter={() => setLogoHovered(true)}
@@ -147,7 +139,6 @@ export default function Navbar() {
             />
           </div>
 
-          {/* Links */}
           {links.map((link, i) => {
             if (link.scrollTo) {
               const active =
@@ -195,7 +186,6 @@ export default function Navbar() {
             );
           })}
 
-          {/* Events */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
