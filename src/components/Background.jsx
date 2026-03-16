@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 // Big fragments — each covers ~50–58% of viewport dimension
 const FRAGMENTS = [
-  { fx: 0.18, fy: 0.24, r: 245, g: 195, b: 40, size: 0.58, seed: 11 }, // gold   top-left
+  { fx: 0.18, fy: 0.24, r: 215, g: 165, b: 10, size: 0.58, seed: 11 }, // gold   top-left
   { fx: 0.82, fy: 0.22, r: 215, g: 80, b: 25, size: 0.52, seed: 22 }, // orange top-right
   { fx: 0.18, fy: 0.76, r: 190, g: 50, b: 18, size: 0.55, seed: 33 }, // burnt  bottom-left
   { fx: 0.8, fy: 0.76, r: 232, g: 138, b: 12, size: 0.5, seed: 44 }, // amber  bottom-right
