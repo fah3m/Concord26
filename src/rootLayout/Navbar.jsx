@@ -22,7 +22,7 @@ export default function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 20 }}
       >
-        <nav className="flex items-center gap-1 bg-black rounded-full px-3 py-2 shadow-xl shadow-black/20">
+        <nav className="flex items-center gap-1 bg-black/70 rounded-full px-3 py-2 shadow-xl shadow-black/20">
           <div
             className="relative w-12 h-12 mr-4 shrink-0 cursor-pointer overflow-hidden rounded-full"
             onMouseEnter={() => setLogoHovered(true)}
