@@ -56,9 +56,7 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const getActiveLinkIndex = () => {
-    if (location.pathname === "/") {
-      return activeSection === "about" ? 1 : 0;
-    }
+    if (location.pathname === "/") return activeSection === "about" ? 1 : 0;
     return links.findIndex((l) => !l.scrollTo && l.path === location.pathname);
   };
 
@@ -97,29 +95,51 @@ export default function Navbar() {
     return routerIsActive;
   };
 
+  const linkClass = (active) =>
+    `relative px-4 py-2 rounded-full text-sm font-main tracking-wide transition-all duration-200 z-10 ${
+      active
+        ? "text-amber-400 font-medium"
+        : "text-white/35 hover:text-white/70 font-normal"
+    }`;
+
   return (
     <>
-      {/* Desktop Navbar */}
+      {/* ── DESKTOP ── */}
       <motion.div
         className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:block"
-        initial={{ y: -80, opacity: 0 }}
+        initial={{ y: -72, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        transition={{ type: "spring", stiffness: 220, damping: 22 }}
       >
         <nav
           ref={navRef}
-          className="relative flex items-center gap-1 bg-black/70 rounded-full px-3 py-2 shadow-xl shadow-black/20"
+          className="relative flex items-center gap-0.5 rounded-full px-2.5 py-1.5"
+          style={{
+            background: "rgba(10,8,5,0.90)", // slightly more opaque to compensate
+            border: "1px solid rgba(255,190,60,0.13)",
+            boxShadow:
+              "0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,190,60,0.06)",
+          }}
         >
+          {/* Sliding amber pill */}
           <motion.span
-            className="absolute top-2 bottom-2 bg-white rounded-full pointer-events-none"
+            className="absolute top-1.5 bottom-1.5 rounded-full pointer-events-none"
+            style={{
+              background: "rgba(255,185,55,0.11)",
+              border: "1px solid rgba(255,185,55,0.28)",
+              boxShadow: "0 0 12px rgba(255,185,55,0.08)",
+            }}
             animate={{ left: pillStyle.left, width: pillStyle.width }}
-            transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            transition={{ type: "spring", stiffness: 320, damping: 30 }}
           />
 
-          <div
-            className="relative w-12 h-12 mr-4 shrink-0 cursor-pointer overflow-hidden rounded-full"
+          {/* Logo */}
+          <motion.div
+            className="relative w-10 h-10 mr-3 shrink-0 cursor-pointer overflow-hidden rounded-full"
             onMouseEnter={() => setLogoHovered(true)}
             onMouseLeave={() => setLogoHovered(false)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.96 }}
           >
             <motion.img
               src="logo.svg"
@@ -137,66 +157,74 @@ export default function Navbar() {
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               draggable="false"
             />
-          </div>
+          </motion.div>
 
-          {links.map((link, i) => {
-            if (link.scrollTo) {
-              const active =
-                location.pathname === "/" && activeSection === link.scrollTo;
-              return (
-                <motion.div
-                  key={link.name}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.07 + 0.2 }}
+          {/* Nav links */}
+          {links.map((link, i) => (
+            <motion.div
+              key={link.name}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: i * 0.06 + 0.15,
+                type: "spring",
+                stiffness: 260,
+                damping: 22,
+              }}
+            >
+              {link.scrollTo ? (
+                <button
+                  ref={(el) => (linkRefs.current[i] = el)}
+                  onClick={() => handleNav(link)}
+                  className={linkClass(
+                    location.pathname === "/" &&
+                      activeSection === link.scrollTo,
+                  )}
                 >
-                  <button
-                    ref={(el) => (linkRefs.current[i] = el)}
-                    onClick={() => handleNav(link)}
-                    className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors font-main ${
-                      active ? "text-black" : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <span className="relative z-10">{link.name}</span>
-                  </button>
-                </motion.div>
-              );
-            }
-            return (
-              <motion.div
-                key={link.name}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.07 + 0.2 }}
-              >
+                  {link.name}
+                </button>
+              ) : (
                 <NavLink
                   ref={(el) => (linkRefs.current[i] = el)}
                   to={link.path}
                   end={link.path === "/"}
-                  className={({ isActive: ra }) => {
-                    const active = isActive(link, ra);
-                    return `relative px-4 py-2 rounded-full text-sm font-medium transition-colors font-main ${
-                      active ? "text-black" : "text-gray-400 hover:text-white"
-                    }`;
-                  }}
+                  className={({ isActive: ra }) =>
+                    linkClass(isActive(link, ra))
+                  }
                 >
-                  <span className="relative z-10">{link.name}</span>
+                  {link.name}
                 </NavLink>
-              </motion.div>
-            );
-          })}
+              )}
+            </motion.div>
+          ))}
 
+          {/* Divider */}
+          <span
+            className="w-px h-4 mx-1 shrink-0"
+            style={{ background: "rgba(255,190,60,0.12)" }}
+          />
+
+          {/* Events CTA */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-            whileHover={{ scale: 1.05 }}
+            transition={{
+              delay: 0.45,
+              type: "spring",
+              stiffness: 220,
+              damping: 18,
+            }}
+            whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
-            className="ml-1"
           >
             <NavLink
               to="/events"
-              className="block px-5 py-2.5 bg-green-700 hover:bg-green-600 text-white text-sm font-medium rounded-full transition-colors font-main"
+              className="block px-5 py-2 rounded-full text-sm font-medium font-main tracking-wide transition-all duration-200"
+              style={{
+                background: "rgba(255,185,55,0.92)",
+                color: "#0c0a06",
+                boxShadow: "0 2px 12px rgba(255,185,55,0.25)",
+              }}
             >
               Events
             </NavLink>
@@ -204,120 +232,161 @@ export default function Navbar() {
         </nav>
       </motion.div>
 
-      {/* Mobile Navbar */}
+      {/* ── MOBILE ── */}
       <motion.div
         className="fixed top-4 left-4 right-4 z-50 md:hidden"
-        initial={{ y: -80, opacity: 0 }}
+        initial={{ y: -72, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        transition={{ type: "spring", stiffness: 220, damping: 22 }}
       >
-        <nav className="bg-black rounded-2xl px-4 py-3 shadow-xl shadow-black/20">
+        <nav
+          className="rounded-2xl px-4 py-3"
+          style={{
+            background: "rgba(10,8,5,0.92)",
+            border: "1px solid rgba(255,190,60,0.12)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            boxShadow:
+              "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,190,60,0.05)",
+          }}
+        >
+          {/* Top bar */}
           <div className="flex items-center justify-between">
-            <div className="relative w-10 h-10 shrink-0 overflow-hidden rounded-full">
+            <div className="relative w-9 h-9 shrink-0 overflow-hidden rounded-full">
               <img
                 src="logo.svg"
                 alt="logo"
-                className="w-full h-full rounded-full object-cover"
+                className="w-full h-full object-cover"
               />
             </div>
-            <button
+
+            {/* Hamburger */}
+            <motion.button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex flex-col justify-center items-center w-8 h-8 gap-1.5"
+              className="flex flex-col justify-center items-center w-8 h-8 gap-[5px]"
+              whileTap={{ scale: 0.9 }}
             >
-              <motion.span
-                className="block h-0.5 w-6 bg-white rounded-full origin-center"
-                animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              />
-              <motion.span
-                className="block h-0.5 w-6 bg-white rounded-full"
-                animate={
-                  menuOpen
-                    ? { opacity: 0, scaleX: 0 }
-                    : { opacity: 1, scaleX: 1 }
-                }
-                transition={{ duration: 0.15 }}
-              />
-              <motion.span
-                className="block h-0.5 w-6 bg-white rounded-full origin-center"
-                animate={
-                  menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }
-                }
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              />
-            </button>
+              {[
+                menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 },
+                menuOpen
+                  ? { opacity: 0, scaleX: 0 }
+                  : { opacity: 1, scaleX: 1 },
+                menuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 },
+              ].map((anim, i) => (
+                <motion.span
+                  key={i}
+                  className="block rounded-full"
+                  style={{
+                    height: "1px",
+                    width: i === 1 ? "14px" : "20px",
+                    background: "rgba(255,185,55,0.65)",
+                    alignSelf: i === 1 ? "flex-end" : "center",
+                  }}
+                  animate={anim}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                />
+              ))}
+            </motion.button>
           </div>
 
+          {/* Dropdown */}
           <AnimatePresence>
             {menuOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                transition={{ type: "spring", stiffness: 280, damping: 28 }}
                 className="overflow-hidden"
               >
-                <div className="flex flex-col gap-1 pt-4 pb-2">
+                <div
+                  className="flex flex-col gap-0.5 pt-3 mt-3"
+                  style={{ borderTop: "1px solid rgba(255,190,60,0.08)" }}
+                >
                   {links.map((link, i) => {
-                    if (link.scrollTo) {
-                      const active =
-                        location.pathname === "/" &&
-                        activeSection === link.scrollTo;
-                      return (
-                        <motion.div
-                          key={link.name}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.06 }}
-                        >
-                          <button
-                            onClick={() => handleNav(link)}
-                            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors font-main ${
-                              active
-                                ? "bg-white text-black"
-                                : "text-gray-400 hover:text-white hover:bg-white/10"
-                            }`}
-                          >
-                            {link.name}
-                          </button>
-                        </motion.div>
-                      );
-                    }
+                    const active = link.scrollTo
+                      ? location.pathname === "/" &&
+                        activeSection === link.scrollTo
+                      : location.pathname === link.path;
+
+                    const mobClass = `w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-main tracking-wide transition-all duration-150 flex items-center justify-between`;
+
+                    const activeStyle = {
+                      color: "rgba(255,185,55,0.95)",
+                      background: "rgba(255,185,55,0.08)",
+                      border: "1px solid rgba(255,185,55,0.16)",
+                    };
+                    const inactiveStyle = {
+                      color: "rgba(255,255,255,0.35)",
+                    };
+
                     return (
                       <motion.div
                         key={link.name}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.06 }}
+                        transition={{
+                          delay: i * 0.05,
+                          type: "spring",
+                          stiffness: 280,
+                          damping: 24,
+                        }}
                       >
-                        <NavLink
-                          to={link.path}
-                          end={link.path === "/"}
-                          onClick={() => setMenuOpen(false)}
-                          className={({ isActive: ra }) => {
-                            const active = isActive(link, ra);
-                            return `block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors font-main ${
-                              active
-                                ? "bg-white text-black"
-                                : "text-gray-400 hover:text-white hover:bg-white/10"
-                            }`;
-                          }}
-                        >
-                          {link.name}
-                        </NavLink>
+                        {link.scrollTo ? (
+                          <button
+                            onClick={() => handleNav(link)}
+                            className={mobClass}
+                            style={active ? activeStyle : inactiveStyle}
+                          >
+                            <span>{link.name}</span>
+                            <motion.span
+                              style={{ fontSize: "10px", opacity: 0.45 }}
+                              animate={{ x: active ? 2 : 0 }}
+                            >
+                              →
+                            </motion.span>
+                          </button>
+                        ) : (
+                          <NavLink
+                            to={link.path}
+                            end={link.path === "/"}
+                            onClick={() => setMenuOpen(false)}
+                            className={mobClass}
+                            style={({ isActive: ra }) =>
+                              isActive(link, ra) ? activeStyle : inactiveStyle
+                            }
+                          >
+                            <span>{link.name}</span>
+                            <span style={{ fontSize: "10px", opacity: 0.45 }}>
+                              →
+                            </span>
+                          </NavLink>
+                        )}
                       </motion.div>
                     );
                   })}
+
+                  {/* Mobile Events */}
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: links.length * 0.06 }}
+                    transition={{
+                      delay: links.length * 0.05,
+                      type: "spring",
+                      stiffness: 280,
+                      damping: 24,
+                    }}
                     className="mt-1"
                   >
                     <NavLink
                       to="/events"
                       onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2.5 bg-green-700 hover:bg-green-600 text-white text-sm font-medium rounded-xl transition-colors text-center font-main"
+                      className="block w-full text-center px-4 py-2.5 rounded-xl text-sm font-medium font-main tracking-wide"
+                      style={{
+                        background: "rgba(255,185,55,0.9)",
+                        color: "#0c0a06",
+                        boxShadow: "0 2px 10px rgba(255,185,55,0.2)",
+                      }}
                     >
                       Events
                     </NavLink>
