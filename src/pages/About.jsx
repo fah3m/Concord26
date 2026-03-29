@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
 const fullText = [
@@ -17,6 +17,18 @@ const About = () => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  // Add this effect inside the About component, after your existing useState/useRef
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    // Cleanup in case component unmounts while modal is open
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   return (
     <>
@@ -381,7 +393,10 @@ const About = () => {
                 style={{ height: "1px", background: "rgba(255,190,60,0.08)" }}
               />
 
-              <div className="px-8 py-6 space-y-4">
+              <div
+                className="px-8 py-6 space-y-4"
+                style={{ overflowY: "auto", maxHeight: "60vh" }}
+              >
                 {fullText.map((para, i) => (
                   <motion.p
                     key={i}

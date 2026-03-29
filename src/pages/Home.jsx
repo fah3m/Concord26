@@ -1,7 +1,22 @@
 import React from "react";
+import { motion } from "framer-motion";
 import BlobBackground from "../components/BlobBackground";
 import SponsorRibbon from "../components/SponsorRibbon";
 import About from "./About";
+
+const ease = [0.16, 1, 0.3, 1];
+
+const fadeUp = (delay = 0, y = 18) => ({
+  initial: { opacity: 0, y },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.75, delay, ease },
+});
+
+const fadeIn = (delay = 0) => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: { duration: 0.9, delay, ease },
+});
 
 const Home = () => {
   return (
@@ -44,26 +59,39 @@ const Home = () => {
 
         {/* ── DESKTOP (lg+) ── */}
 
-        {/* Phoenix — pushed further right, bleeds off edge naturally */}
-        <img
-          src="logo.outline.svg"
-          alt=""
-          draggable="false"
+        {/* Phoenix — motion.div handles fade only, img keeps ALL original positioning */}
+        <motion.div
           className="hidden lg:block absolute pointer-events-none z-[2]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.25, ease }}
           style={{
             height: "clamp(340px, 70vh, 750px)",
             top: "50%",
             transform: "translateY(-50%)",
-            right: "clamp(-2vw, 8vw, 12vw)", // shifted right vs previous 18–22vw
-            filter:
-              "brightness(1.4) sepia(1) saturate(4) hue-rotate(330deg) drop-shadow(0 0 40px rgba(255,140,20,0.9)) drop-shadow(0 0 80px rgba(255,80,0,0.6)) drop-shadow(0 0 120px rgba(200,40,0,0.4))",
-            mixBlendMode: "screen",
-            opacity: 0.95,
+            right: "clamp(-2vw, 8vw, 12vw)",
           }}
-        />
+        >
+          <img
+            src="logo.outline.svg"
+            alt=""
+            draggable="false"
+            style={{
+              height: "100%",
+              display: "block",
+              filter:
+                "brightness(1.4) sepia(1) saturate(4) hue-rotate(330deg) drop-shadow(0 0 40px rgba(255,140,20,0.9)) drop-shadow(0 0 80px rgba(255,80,0,0.6)) drop-shadow(0 0 120px rgba(200,40,0,0.4))",
+              mixBlendMode: "screen",
+              opacity: 0.95,
+            }}
+          />
+        </motion.div>
 
         {/* Top-right label */}
-        <div className="hidden lg:block absolute top-[4vh] right-[5vw] z-10 text-right">
+        <motion.div
+          className="hidden lg:block absolute top-[4vh] right-[5vw] z-10 text-right"
+          {...fadeUp(0.1, 12)}
+        >
           <p className="font-main text-[0.65rem] tracking-[0.38em] uppercase text-amber-500/60 mb-1.5 font-bold">
             Annual Fest
           </p>
@@ -77,7 +105,7 @@ const Home = () => {
           >
             Calcutta Boys' School
           </h2>
-        </div>
+        </motion.div>
 
         {/* Main left content */}
         <div
@@ -89,7 +117,10 @@ const Home = () => {
           }}
         >
           {/* Eyebrow */}
-          <div className="flex items-center gap-3 mb-6">
+          <motion.div
+            className="flex items-center gap-3 mb-6"
+            {...fadeUp(0.05, 14)}
+          >
             <span className="font-main text-[0.65rem] tracking-[0.45em] uppercase text-amber-400/60 font-bold">
               Est. 1877
             </span>
@@ -100,11 +131,14 @@ const Home = () => {
             <span className="font-main text-[0.65rem] tracking-[0.3em] uppercase text-white/30 font-bold">
               Calcutta Boys' School
             </span>
-          </div>
+          </motion.div>
 
-          {/* CONCORD — bigger & heavier */}
-          <h1
+          {/* CONCORD */}
+          <motion.h1
             className="block font-main font-black uppercase"
+            initial={{ opacity: 0, y: 32, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.85, delay: 0.18, ease }}
             style={{
               fontSize: "clamp(4.8rem, 11.5vw, 10.5rem)",
               lineHeight: 0.88,
@@ -119,10 +153,13 @@ const Home = () => {
             }}
           >
             CONCORD
-          </h1>
+          </motion.h1>
 
           {/* Edition line */}
-          <div className="flex items-center gap-4 mt-5">
+          <motion.div
+            className="flex items-center gap-4 mt-5"
+            {...fadeUp(0.3, 12)}
+          >
             <span className="font-main text-[0.72rem] tracking-[0.32em] uppercase text-amber-400/75 font-bold">
               2026 Edition
             </span>
@@ -133,10 +170,13 @@ const Home = () => {
             <span className="font-main text-white/50 text-[0.88rem] tracking-[0.18em] uppercase font-bold">
               Rebirth of Aahans
             </span>
-          </div>
+          </motion.div>
 
           {/* Ornament */}
-          <div className="flex items-center gap-4 mt-10 mb-10">
+          <motion.div
+            className="flex items-center gap-4 mt-10 mb-10"
+            {...fadeIn(0.42)}
+          >
             <div
               style={{
                 width: "clamp(60px, 8vw, 120px)",
@@ -173,10 +213,10 @@ const Home = () => {
                   "linear-gradient(to left, transparent, rgba(255,190,60,0.55))",
               }}
             />
-          </div>
+          </motion.div>
 
-          {/* Event info — bigger labels */}
-          <div className="flex items-start gap-10">
+          {/* Event info */}
+          <motion.div className="flex items-start gap-10" {...fadeUp(0.5, 10)}>
             <div>
               <p className="font-main text-[0.58rem] tracking-[0.45em] uppercase text-amber-400/45 mb-2 font-bold">
                 Date
@@ -209,10 +249,10 @@ const Home = () => {
                 XXVI
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bottom rule */}
-          <div className="flex items-center mt-10">
+          <motion.div className="flex items-center mt-10" {...fadeIn(0.6)}>
             <div
               style={{
                 width: "clamp(80px, 12vw, 180px)",
@@ -230,11 +270,14 @@ const Home = () => {
                 flexShrink: 0,
               }}
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom-right est. tag */}
-        <div className="hidden lg:block absolute bottom-[7vh] right-[5vw] z-10 text-right">
+        <motion.div
+          className="hidden lg:block absolute bottom-[7vh] right-[5vw] z-10 text-right"
+          {...fadeUp(0.55, 10)}
+        >
           <p className="font-main text-[0.6rem] tracking-[0.32em] uppercase text-white/25 font-bold">
             Est. 1877
           </p>
@@ -247,24 +290,30 @@ const Home = () => {
               }}
             />
           </div>
-        </div>
+        </motion.div>
 
         {/* ── MOBILE + TABLET (< lg) ── */}
         <div className="lg:hidden absolute inset-0 z-10 flex flex-col justify-between py-[3vh] px-6">
           {/* Top bar */}
-          <div className="flex justify-between items-center">
+          <motion.div
+            className="flex justify-between items-center"
+            {...fadeUp(0.05, 10)}
+          >
             <span className="font-main text-[0.6rem] tracking-[0.38em] uppercase text-amber-500/60 font-bold">
               Annual Fest
             </span>
             <span className="font-main text-[0.6rem] tracking-[0.25em] uppercase text-white/30 font-bold">
               Issue XXVI
             </span>
-          </div>
+          </motion.div>
 
-          {/* Phoenix */}
-          <div
+          {/* Phoenix mobile — scale fade, no position interference */}
+          <motion.div
             className="flex items-center justify-center"
             style={{ height: "42vh" }}
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.0, delay: 0.2, ease }}
           >
             <img
               src="logo.outline.svg"
@@ -279,10 +328,10 @@ const Home = () => {
                 opacity: 0.95,
               }}
             />
-          </div>
+          </motion.div>
 
           {/* Ornament divider */}
-          <div className="flex items-center gap-3">
+          <motion.div className="flex items-center gap-3" {...fadeIn(0.35)}>
             <div
               className="flex-1 h-px"
               style={{
@@ -317,11 +366,14 @@ const Home = () => {
                   "linear-gradient(to left, transparent, rgba(255,190,60,0.4))",
               }}
             />
-          </div>
+          </motion.div>
 
           {/* Text block */}
           <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-2 mb-3">
+            <motion.div
+              className="flex items-center gap-2 mb-3"
+              {...fadeUp(0.22, 12)}
+            >
               <span className="font-main text-[0.58rem] tracking-[0.4em] uppercase text-amber-400/55 font-bold">
                 Est. 1877
               </span>
@@ -332,10 +384,13 @@ const Home = () => {
               <span className="font-main text-[0.58rem] tracking-[0.25em] uppercase text-white/28 font-bold">
                 Calcutta Boys' School
               </span>
-            </div>
+            </motion.div>
 
-            <h1
+            <motion.h1
               className="font-main font-black uppercase"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.85, delay: 0.3, ease }}
               style={{
                 fontSize: "clamp(3.2rem, 18vw, 5.5rem)",
                 lineHeight: 0.88,
@@ -350,9 +405,12 @@ const Home = () => {
               }}
             >
               CONCORD
-            </h1>
+            </motion.h1>
 
-            <div className="flex items-center gap-3 mt-3">
+            <motion.div
+              className="flex items-center gap-3 mt-3"
+              {...fadeUp(0.4, 10)}
+            >
               <span className="font-main text-[0.65rem] tracking-[0.3em] uppercase text-amber-400/70 font-bold">
                 2026 Edition
               </span>
@@ -363,11 +421,14 @@ const Home = () => {
               <span className="font-main text-white/45 text-[0.78rem] tracking-[0.15em] uppercase font-bold">
                 Rebirth of Aahans
               </span>
-            </div>
+            </motion.div>
           </div>
 
           {/* Event info */}
-          <div className="flex items-start justify-center gap-6">
+          <motion.div
+            className="flex items-start justify-center gap-6"
+            {...fadeUp(0.5, 10)}
+          >
             <div className="text-center">
               <p className="font-main text-[0.52rem] tracking-[0.4em] uppercase text-amber-400/40 mb-1.5 font-bold">
                 Date
@@ -400,10 +461,10 @@ const Home = () => {
                 XXVI
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bottom ornament */}
-          <div className="flex items-center gap-3">
+          <motion.div className="flex items-center gap-3" {...fadeIn(0.6)}>
             <div
               className="flex-1 h-px"
               style={{
@@ -427,8 +488,9 @@ const Home = () => {
                   "linear-gradient(to left, transparent, rgba(255,190,60,0.25))",
               }}
             />
-          </div>
+          </motion.div>
         </div>
+
         <SponsorRibbon />
       </div>
 
