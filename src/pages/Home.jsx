@@ -91,7 +91,7 @@ const Home = () => {
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-6">
             <span className="font-main text-[0.65rem] tracking-[0.45em] uppercase text-amber-400/60 font-bold">
-              Est. 1884
+              Est. 1877
             </span>
             <span
               className="w-5 h-px flex-shrink-0"
@@ -234,9 +234,9 @@ const Home = () => {
         </div>
 
         {/* Bottom-right est. tag */}
-        <div className="hidden lg:block absolute bottom-[4vh] right-[5vw] z-10 text-right">
+        <div className="hidden lg:block absolute bottom-[7vh] right-[5vw] z-10 text-right">
           <p className="font-main text-[0.6rem] tracking-[0.32em] uppercase text-white/25 font-bold">
-            Est. 1884
+            Est. 1877
           </p>
           <div className="flex flex-col items-end mt-3">
             <span
@@ -323,7 +323,7 @@ const Home = () => {
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-2 mb-3">
               <span className="font-main text-[0.58rem] tracking-[0.4em] uppercase text-amber-400/55 font-bold">
-                Est. 1884
+                Est. 1877
               </span>
               <span
                 className="w-4 h-px flex-shrink-0"
@@ -429,8 +429,9 @@ const Home = () => {
             />
           </div>
         </div>
+        <SponsorRibbon />
       </div>
-      <SponsorRibbon />
+
       <div id="about">
         <About />
       </div>
