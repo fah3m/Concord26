@@ -376,8 +376,8 @@ export default function BlobBackground() {
           <feComposite in="b" in2="SourceGraphic" operator="atop" />
         </filter>
         <rect
-          width="100%"
-          height="100%"
+          width="100vw"
+          height="100vh"
           fill="#0c0a05"
           filter="url(#grain)"
           opacity={GRAIN_OPACITY}

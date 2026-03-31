@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import BlobBackground from "../components/BlobBackground";
 import SponsorRibbon from "../components/SponsorRibbon";
 import About from "./About";
+import Gallery from "./Gallery";
 
 const ease = [0.16, 1, 0.3, 1];
 
@@ -496,6 +497,7 @@ const Home = () => {
 
       <div id="about">
         <About />
+        <Gallery />
       </div>
     </div>
   );
