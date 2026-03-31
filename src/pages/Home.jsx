@@ -497,7 +497,10 @@ const Home = () => {
 
       <div id="about">
         <About />
-        <Gallery />
+      </div>
+
+      <div id="gallery">
+       <Gallery />
       </div>
     </div>
   );

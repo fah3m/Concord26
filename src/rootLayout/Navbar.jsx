@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const links = [
   { name: "Home", path: "/", scrollTo: "home" },
   { name: "About", path: "/", scrollTo: "about" },
-  { name: "Gallery", path: "/gallery" },
+  { name: "Gallery", path: "/", scrollTo: "gallery" },
   { name: "Contact", path: "/contact" },
 ];
 
@@ -38,7 +38,7 @@ export default function Navbar() {
       pendingScroll.current = null;
       setTimeout(() => scrollToId(target), 100);
     }
-    const sections = ["home", "about"];
+    const sections = ["home", "about", "gallery"];
     const observers = [];
     sections.forEach((id) => {
       const el = document.getElementById(id);
@@ -56,7 +56,11 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const getActiveLinkIndex = () => {
-    if (location.pathname === "/") return activeSection === "about" ? 1 : 0;
+    if (location.pathname === "/") {
+      if (activeSection === "about") return 1;
+      if (activeSection === "gallery") return 2;
+      return 0;
+    }
     return links.findIndex((l) => !l.scrollTo && l.path === location.pathname);
   };
 

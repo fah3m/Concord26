@@ -1,716 +1,371 @@
-import { useRef, useState } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useState } from "react"; // used in GalleryCard
+import { motion } from "framer-motion";
 
-/* ─── GLOBAL CSS ─── */
-const GALLERY_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Cinzel:wght@700&display=swap');
-
-  @keyframes scrollLeft {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  @keyframes scrollRight {
-    0%   { transform: translateX(-50%); }
-    100% { transform: translateX(0); }
-  }
-
-  .ribbon-left  { animation: scrollLeft  38s linear infinite; }
-  .ribbon-right { animation: scrollRight 44s linear infinite; }
-  .ribbon-left:hover,
-  .ribbon-right:hover { animation-play-state: paused; }
-
-  .gcard {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    flex-shrink: 0;
-    cursor: pointer;
-    border: 1px solid rgba(255,185,0,0.12);
-  }
-  .gcard::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(4,2,0,0.82) 0%, rgba(4,2,0,0.12) 45%, transparent 100%);
-    transition: opacity 0.35s ease;
-    pointer-events: none;
-  }
-  .gcard:hover::after { opacity: 0.55; }
-  .gcard img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-    transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
-  }
-  .gcard:hover img { transform: scale(1.1); }
-  .gcard-label {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 12px 14px 10px;
-    z-index: 3;
-    transform: translateY(6px);
-    opacity: 0;
-    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
-  }
-  .gcard:hover .gcard-label { transform: translateY(0); opacity: 1; }
-
-  .grain {
-    position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    opacity: 0.032;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 160px;
-  }
-
-  .shimmer-text {
-    background: linear-gradient(115deg, rgba(255,140,10,1) 0%, rgba(255,195,60,1) 20%, rgba(255,225,130,1) 38%, rgba(255,255,255,0.96) 55%, rgba(255,230,160,0.85) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 28px rgba(255,120,0,0.5)) drop-shadow(0 0 8px rgba(255,160,30,0.35));
-  }
-`;
-
-if (
-  typeof document !== "undefined" &&
-  !document.getElementById("gallery-css")
-) {
-  const tag = document.createElement("style");
-  tag.id = "gallery-css";
-  tag.textContent = GALLERY_CSS;
-  document.head.appendChild(tag);
-}
-
-const ease = [0.16, 1, 0.3, 1];
-
-/* ─── DATA ─── */
-const ROW1 = [
-  { src: "gall/mayukh.webp", caption: "Opening Ceremony", tag: "AON '25" },
-  { src: "gall/israel.webp", caption: "Delegate Sessions", tag: "AON '25" },
-  { src: "gall/megacity.webp", caption: "Committee Debate", tag: "AON '25" },
-  { src: "gall/aksh.webp", caption: "Best Delegate", tag: "AON '25" },
-  { src: "gall/maam.webp", caption: "Faculty Address", tag: "AON '25" },
-  { src: "gall/gundaboy.webp", caption: "Cultural Night", tag: "AON '25" },
+const strip1 = [
+  {
+    id: 1,
+    label: "OPENING CEREMONY",
+    sub: "2026 · MAIN STAGE",
+    imgUrl: "/gallery/1.jpg",
+  },
+  {
+    id: 2,
+    label: "CULTURAL NIGHT",
+    sub: "PERFORMANCES",
+    imgUrl: "/gallery/2.jpg",
+  },
+  {
+    id: 3,
+    label: "SPORTS ARENA",
+    sub: "TRACK & FIELD",
+    imgUrl: "/gallery/3.jpg",
+  },
+  {
+    id: 4,
+    label: "ART EXHIBITION",
+    sub: "PHOENIX GALLERY",
+    imgUrl: "/gallery/4.jpg",
+  },
+  {
+    id: 5,
+    label: "MUSIC SHOWCASE",
+    sub: "LIVE ACTS",
+    imgUrl: "/gallery/5.jpg",
+  },
+  {
+    id: 6,
+    label: "BEST PERFORMER",
+    sub: "AWARDS 2026",
+    imgUrl: "/gallery/6.jpg",
+  },
+  { id: 7, label: "CROWD MOMENTS", sub: "DAY ONE", imgUrl: "/gallery/7.jpg" },
+  {
+    id: 8,
+    label: "SEC-GEN ADDRESS",
+    sub: "INAUGURAL SPEECH",
+    imgUrl: "/gallery/8.jpg",
+  },
 ];
 
-const ROW2 = [
-  { src: "gall/flower.webp", caption: "Closing Gala", tag: "AON '24" },
-  { src: "gall/mogger.webp", caption: "Press Corps", tag: "AON '24" },
-  { src: "gall/mogger2.webp", caption: "Security Council", tag: "AON '24" },
-  { src: "gall/desiboy.webp", caption: "Awardees", tag: "AON '24" },
-  { src: "gall/head.webp", caption: "Secretariat", tag: "AON '24" },
-  { src: "gall/mayukh.webp", caption: "Keynote Address", tag: "AON '24" },
+const strip2 = [
+  {
+    id: 9,
+    label: "BACKSTAGE LIFE",
+    sub: "BEHIND THE SCENES",
+    imgUrl: "/gallery/9.jpg",
+  },
+  {
+    id: 10,
+    label: "DRAMA & THEATRE",
+    sub: "MAIN AUDITORIUM",
+    imgUrl: "/gallery/10.jpg",
+  },
+  {
+    id: 11,
+    label: "FOOD STALLS",
+    sub: "FEST FLAVOURS",
+    imgUrl: "/gallery/11.jpg",
+  },
+  {
+    id: 12,
+    label: "CROWD PORTRAITS",
+    sub: "CLASS OF 2026",
+    imgUrl: "/gallery/12.jpg",
+  },
+  {
+    id: 13,
+    label: "PHOTOGRAPHY AWARD",
+    sub: "BEST CAPTURE",
+    imgUrl: "/gallery/13.jpg",
+  },
+  {
+    id: 14,
+    label: "FACULTY FELICITATION",
+    sub: "GRATITUDE SESSION",
+    imgUrl: "/gallery/14.jpg",
+  },
+  {
+    id: 15,
+    label: "FINAL MOMENTS",
+    sub: "GOODBYES & BONDS",
+    imgUrl: "/gallery/15.jpg",
+  },
+  {
+    id: 16,
+    label: "REBIRTH OF AAHANS",
+    sub: "THEME REVEAL",
+    imgUrl: "/gallery/16.jpg",
+  },
 ];
 
-/* ─── SCROLL REVEAL ─── */
-function Reveal({ children, delay = 0, y = 22 }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+const gradients = [
+  "from-[#5a2d00] via-[#8b4513] to-[#3d1a00]",
+  "from-[#1a0a00] via-[#7a3800] to-[#2d1500]",
+  "from-[#6b3200] via-[#4a1800] to-[#8a4200]",
+  "from-[#3d1800] via-[#9a5500] to-[#2a1000]",
+  "from-[#4a2000] via-[#7a4000] to-[#1a0800]",
+  "from-[#7a3500] via-[#3a1800] to-[#6a3000]",
+  "from-[#2a1200] via-[#8a4500] to-[#4a2000]",
+  "from-[#5a2800] via-[#1e0d00] to-[#9a5000]",
+];
+
+function GalleryCard({ item, index }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.72, delay, ease }}
+      className="relative flex-shrink-0 overflow-hidden cursor-pointer"
+      style={{ width: 340, height: 240 }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileHover={{ scale: 1.04, zIndex: 20 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      {children}
+      {/* ↓ Replace with <img src={item.imgUrl} className="absolute inset-0 w-full h-full object-cover" /> */}
+      {/* Gradient fallback — hidden once image loads */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]}`}
+      />
+
+      {/* Real image */}
+      {item.imgUrl && (
+        <img
+          src={item.imgUrl}
+          alt={item.label}
+          className="absolute inset-0 w-full h-full object-cover"
+          draggable="false"
+        />
+      )}
+
+      {/* Vignette */}
+      <div
+        className="absolute inset-0"
+        style={{
+          boxShadow:
+            "inset 0 0 50px rgba(0,0,0,0.65), inset 0 0 1px rgba(194,120,0,0.3)",
+        }}
+      />
+
+      {/* Bottom scrim */}
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)",
+        }}
+        animate={{ opacity: hovered ? 1 : 0.7 }}
+        transition={{ duration: 0.3 }}
+      />
+
+      {/* Top gold accent line on hover */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background:
+            "linear-gradient(to right, transparent, #c27800, transparent)",
+        }}
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      />
+
+      {/* Corner brackets */}
+      <svg
+        className="absolute top-3 left-3 w-5 h-5"
+        style={{ opacity: hovered ? 0.9 : 0.35, transition: "opacity 0.3s" }}
+        viewBox="0 0 20 20"
+        fill="none"
+      >
+        <path d="M1 9 L1 1 L9 1" stroke="#c27800" strokeWidth="1.5" />
+      </svg>
+      <svg
+        className="absolute bottom-3 right-3 w-5 h-5"
+        style={{ opacity: hovered ? 0.9 : 0.35, transition: "opacity 0.3s" }}
+        viewBox="0 0 20 20"
+        fill="none"
+      >
+        <path d="M19 11 L19 19 L11 19" stroke="#c27800" strokeWidth="1.5" />
+      </svg>
+
+      {/* Index number */}
+      <span
+        className="absolute top-4 right-5 font-mono text-[9px] tracking-widest"
+        style={{ color: "rgba(194,120,0,0.4)" }}
+      >
+        {String((index % 8) + 1).padStart(2, "0")}
+      </span>
+
+      {/* Label */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 px-5 pb-5"
+        animate={{ y: hovered ? 0 : 5, opacity: hovered ? 1 : 0.75 }}
+        transition={{ duration: 0.3 }}
+      >
+        <p
+          className="text-[8px] tracking-[0.3em] mb-1 font-mono"
+          style={{ color: "#c27800" }}
+        >
+          {item.sub}
+        </p>
+        <p
+          className="text-[13px] font-semibold tracking-[0.14em] text-white uppercase"
+          style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif" }}
+        >
+          {item.label}
+        </p>
+      </motion.div>
     </motion.div>
   );
 }
 
-/* ─── ORBS ─── */
-function Orbs() {
-  const orbs = [
-    {
-      w: "clamp(300px,42vw,600px)",
-      top: "-5%",
-      left: "30%",
-      dur: 20,
-      c: "rgba(200,90,0,0.13)",
-    },
-    {
-      w: "clamp(220px,30vw,440px)",
-      top: "60%",
-      left: "-6%",
-      dur: 26,
-      c: "rgba(180,70,0,0.10)",
-    },
-    {
-      w: "clamp(180px,22vw,340px)",
-      top: "35%",
-      right: "-2%",
-      dur: 18,
-      c: "rgba(220,130,0,0.09)",
-    },
-  ];
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {orbs.map((o, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            width: o.w,
-            height: o.w,
-            top: o.top,
-            left: o.left,
-            right: o.right,
-            background: `radial-gradient(circle, ${o.c} 0%, transparent 70%)`,
-          }}
-          animate={{
-            x: [0, 20, -14, 0],
-            y: [0, -22, 15, 0],
-            scale: [1, 1.05, 0.97, 1],
-          }}
-          transition={{ duration: o.dur, repeat: Infinity, ease: "easeInOut" }}
-        />
-      ))}
-    </div>
-  );
-}
+function InfiniteRibbon({ items, direction = 1, speed = 38 }) {
+  const tripled = [...items, ...items, ...items];
+  const singleSetWidth = items.length * (340 + 20);
 
-/* ─── CARD ─── */
-function GCard({ img, w = 300, h = 210, onClick }) {
   return (
-    <div
-      className="gcard"
-      style={{ width: w, height: h }}
-      onClick={() => onClick(img)}
-    >
-      <img
-        src={img.src}
-        alt={img.caption}
-        onError={(e) => {
-          e.target.style.display = "none";
-          e.target.parentElement.style.background =
-            "linear-gradient(135deg, rgba(40,20,0,0.9), rgba(10,5,0,0.95))";
-        }}
-      />
-      <div className="gcard-label">
-        <p
-          style={{
-            fontFamily: "'Oswald',sans-serif",
-            fontWeight: 600,
-            fontSize: "0.52rem",
-            letterSpacing: "0.2em",
-            color: "rgba(255,190,60,0.55)",
-            textTransform: "uppercase",
-          }}
-        >
-          {img.tag}
-        </p>
-        <p
-          style={{
-            fontFamily: "'Bebas Neue',sans-serif",
-            fontSize: "1.05rem",
-            color: "#fff",
-            letterSpacing: "0.05em",
-          }}
-        >
-          {img.caption}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── RIBBON ─── */
-function Ribbon({ images, dir = "left", cardW = 300, cardH = 210 }) {
-  const doubled = [...images, ...images];
-  return (
-    <div style={{ overflow: "hidden", width: "100%" }}>
+    <div className="relative overflow-hidden w-full">
       <div
-        className={dir === "left" ? "ribbon-left" : "ribbon-right"}
-        style={{ display: "flex", gap: 16, width: "max-content" }}
-      >
-        {doubled.map((img, i) => (
-          <GCard key={i} img={img} w={cardW} h={cardH} onClick={() => {}} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── RIBBON WITH LIGHTBOX ─── */
-function RibbonInteractive({
-  images,
-  dir = "left",
-  cardW = 300,
-  cardH = 210,
-  onOpen,
-}) {
-  const doubled = [...images, ...images];
-  return (
-    <div style={{ overflow: "hidden", width: "100%" }}>
-      <div
-        className={dir === "left" ? "ribbon-left" : "ribbon-right"}
-        style={{ display: "flex", gap: 16, width: "max-content" }}
-      >
-        {doubled.map((img, i) => (
-          <GCard key={i} img={img} w={cardW} h={cardH} onClick={onOpen} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── LIGHTBOX ─── */
-function Lightbox({ img, onClose }) {
-  return (
-    <AnimatePresence>
-      {img && (
-        <motion.div
-          onClick={(e) => e.target === e.currentTarget && onClose()}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.22 }}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 2000,
-            background: "rgba(3,2,0,0.93)",
-            backdropFilter: "blur(12px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 24,
-          }}
-        >
-          <motion.div
-            initial={{ scale: 0.88, opacity: 0, y: 28 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 290, damping: 26 }}
-            style={{
-              position: "relative",
-              maxWidth: "min(940px, 90vw)",
-              borderRadius: 14,
-              overflow: "hidden",
-              border: "1px solid rgba(255,185,0,0.22)",
-              boxShadow:
-                "0 0 90px rgba(200,110,0,0.2), 0 0 30px rgba(0,0,0,0.7)",
-            }}
-          >
-            <img
-              src={img.src}
-              alt={img.caption}
-              style={{
-                width: "100%",
-                maxHeight: "72vh",
-                objectFit: "cover",
-                display: "block",
-              }}
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.parentElement.style.minWidth = "480px";
-                e.target.parentElement.style.minHeight = "300px";
-                e.target.parentElement.style.background = "rgba(20,10,0,0.95)";
-              }}
-            />
-            {/* caption */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background:
-                  "linear-gradient(to top, rgba(4,2,0,0.96) 0%, transparent 100%)",
-                padding: "32px 22px 18px",
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: "'Oswald',sans-serif",
-                  fontWeight: 600,
-                  fontSize: "0.55rem",
-                  letterSpacing: "0.26em",
-                  color: "rgba(255,190,60,0.5)",
-                  textTransform: "uppercase",
-                }}
-              >
-                {img.tag}
-              </p>
-              <p
-                style={{
-                  fontFamily: "'Bebas Neue',sans-serif",
-                  fontSize: "clamp(1.6rem,4vw,2.2rem)",
-                  color: "#fff",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                {img.caption}
-              </p>
-            </div>
-            {/* close */}
-            <motion.button
-              onClick={onClose}
-              whileHover={{ scale: 1.12, background: "rgba(255,185,0,0.18)" }}
-              whileTap={{ scale: 0.9 }}
-              style={{
-                position: "absolute",
-                top: 12,
-                right: 12,
-                width: 34,
-                height: 34,
-                borderRadius: "50%",
-                background: "rgba(10,6,0,0.75)",
-                border: "1px solid rgba(255,185,0,0.22)",
-                color: "rgba(255,200,60,0.7)",
-                fontSize: "0.85rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-              }}
-            >
-              ✕
-            </motion.button>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-/* ─── ORNAMENT ─── */
-function Ornament() {
-  return (
-    <div className="flex items-center gap-4 justify-center">
-      <div
+        className="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
         style={{
-          width: "clamp(50px,10vw,140px)",
-          height: "1px",
-          background:
-            "linear-gradient(to right, transparent, rgba(255,190,60,0.45))",
+          background: "linear-gradient(to right, #0d0700, transparent)",
         }}
       />
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-        <rect
-          x="5"
-          y="0.5"
-          width="6.5"
-          height="6.5"
-          transform="rotate(45 5 5)"
-          fill="none"
-          stroke="rgba(255,190,60,0.6)"
-          strokeWidth="0.8"
-        />
-        <rect
-          x="5"
-          y="3"
-          width="3"
-          height="3"
-          transform="rotate(45 5 5)"
-          fill="rgba(255,190,60,0.5)"
-        />
-      </svg>
       <div
-        style={{
-          width: "clamp(50px,10vw,140px)",
-          height: "1px",
-          background:
-            "linear-gradient(to left, transparent, rgba(255,190,60,0.45))",
+        className="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+        style={{ background: "linear-gradient(to left, #0d0700, transparent)" }}
+      />
+
+      <motion.div
+        className="flex gap-5 w-max"
+        animate={{
+          x: direction > 0 ? [0, -singleSetWidth] : [-singleSetWidth, 0],
         }}
+        transition={{
+          duration: singleSetWidth / speed,
+          ease: "linear",
+          repeat: Infinity,
+          repeatType: "loop",
+        }}
+      >
+        {tripled.map((item, i) => (
+          <GalleryCard
+            key={`${item.id}-${i}`}
+            item={item}
+            index={i % items.length}
+          />
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+function StripLabel({ label }) {
+  return (
+    <div className="flex items-center gap-4 px-20 pt-5 pb-3">
+      <span
+        className="font-mono text-[8px] tracking-[0.45em] uppercase whitespace-nowrap"
+        style={{ color: "rgba(194,120,0,0.3)" }}
+      >
+        {label}
+      </span>
+      <div
+        className="w-16 h-px"
+        style={{ background: "rgba(194,120,0,0.18)" }}
       />
     </div>
   );
 }
 
-/* ─── MAIN GALLERY PAGE ─── */
 export default function Gallery() {
-  const [light, setLight] = useState(null);
-
   return (
-    <div
-      id="gallery"
-      style={{
-        background: "transparent",
-        minHeight: "100vh",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div className="grain" />
-      <Orbs />
+    <div className="w-full" style={{ background: "transparent" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&family=Space+Mono:ital@0;1&display=swap');`}</style>
 
-      {/* Vignette */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      />
-
-      <div style={{ position: "relative", zIndex: 2 }}>
-        {/* ══ HEADER ══ */}
+      {/* ── HEADER ── */}
+      <div className="flex items-flex-end justify-between px-20 pt-16 pb-0 relative">
+        {/* Vertical gold rule */}
         <div
+          className="absolute left-20 top-16"
           style={{
-            paddingTop: "clamp(64px,10vh,110px)",
-            paddingBottom: "clamp(32px,5vh,60px)",
-            textAlign: "center",
+            width: 2,
+            height: 56,
+            background: "linear-gradient(to bottom, transparent, #c27800)",
           }}
-        >
-          {/* eyebrow */}
-          <Reveal delay={0.05}>
-            <div className="flex items-center gap-3 justify-center mb-4">
-              <span
-                style={{
-                  fontFamily: "'Oswald',sans-serif",
-                  fontWeight: 600,
-                  fontSize: "0.62rem",
-                  letterSpacing: "0.42em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,190,60,0.55)",
-                }}
-              >
-                Est. 1877
-              </span>
-              <span
-                style={{
-                  width: 18,
-                  height: 1,
-                  background: "rgba(255,190,60,0.3)",
-                  flexShrink: 0,
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: "'Oswald',sans-serif",
-                  fontWeight: 600,
-                  fontSize: "0.62rem",
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.25)",
-                }}
-              >
-                Calcutta Boys' School
-              </span>
-            </div>
-          </Reveal>
-
-          {/* main title */}
-          <Reveal delay={0.12}>
-            <h1
-              className="shimmer-text"
-              style={{
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: "clamp(4.5rem,16vw,11rem)",
-                lineHeight: 0.88,
-                letterSpacing: "0.04em",
-                display: "block",
-              }}
-            >
-              GALLERY
-            </h1>
-          </Reveal>
-
-          {/* sub */}
-          <Reveal delay={0.2}>
-            <div className="flex items-center gap-3 justify-center mt-3 flex-wrap">
-              <span
-                style={{
-                  fontFamily: "'Oswald',sans-serif",
-                  fontWeight: 600,
-                  fontSize: "0.7rem",
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,185,60,0.65)",
-                }}
-              >
-                Moments
-              </span>
-              <span
-                style={{
-                  width: 24,
-                  height: 1,
-                  background: "rgba(255,190,60,0.3)",
-                  flexShrink: 0,
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: "'Cinzel',serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(0.6rem,1.5vw,0.78rem)",
-                  letterSpacing: "0.12em",
-                  color: "rgba(220,175,80,0.55)",
-                }}
-              >
-                Concord XXVI · 2026
-              </span>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.28}>
-            <div className="mt-6">
-              <Ornament />
-            </div>
-          </Reveal>
+        />
+        <div className="pl-5">
+          <p
+            className="font-mono text-[9px] tracking-[0.35em] mb-3"
+            style={{ color: "#c27800" }}
+          >
+            CONCORD XXVI · REBIRTH OF AAHANS · CALCUTTA BOYS' SCHOOL
+          </p>
+          <h1
+            className="text-[clamp(52px,7vw,96px)] font-semibold leading-none tracking-[0.08em] uppercase text-white"
+            style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif" }}
+          >
+            GAL<span style={{ color: "#c27800" }}>L</span>ERY
+          </h1>
         </div>
-
-        {/* ══ RIBBON 1 — scroll LEFT ══ */}
-        <Reveal delay={0.3} y={32}>
-          <div style={{ marginBottom: 16 }}>
-            {/* label */}
-            <div
-              style={{ paddingLeft: "clamp(16px,5vw,60px)", marginBottom: 10 }}
-            >
-              <span
-                style={{
-                  fontFamily: "'Oswald',sans-serif",
-                  fontWeight: 600,
-                  fontSize: "0.55rem",
-                  letterSpacing: "0.35em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,190,60,0.35)",
-                }}
-              >
-                Concord 2025
-              </span>
-            </div>
-
-            <RibbonInteractive
-              images={ROW1}
-              dir="left"
-              cardW={320}
-              cardH={220}
-              onOpen={setLight}
-            />
-          </div>
-        </Reveal>
-
-        {/* ══ RIBBON 2 — scroll RIGHT ══ */}
-        <Reveal delay={0.4} y={32}>
-          <div style={{ marginTop: 16, marginBottom: 0 }}>
-            <div
-              style={{ paddingLeft: "clamp(16px,5vw,60px)", marginBottom: 10 }}
-            >
-              <span
-                style={{
-                  fontFamily: "'Oswald',sans-serif",
-                  fontWeight: 600,
-                  fontSize: "0.55rem",
-                  letterSpacing: "0.35em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,190,60,0.35)",
-                }}
-              >
-                Concord 2024
-              </span>
-            </div>
-
-            <RibbonInteractive
-              images={ROW2}
-              dir="right"
-              cardW={360}
-              cardH={240}
-              onOpen={setLight}
-            />
-          </div>
-        </Reveal>
-
-        {/* ══ DIVIDER ══ */}
-        <Reveal delay={0.1}>
-          <div style={{ padding: "clamp(40px,7vh,80px) 0 0" }}>
-            <Ornament />
-          </div>
-        </Reveal>
-
-        {/* ══ STATS ROW ══ */}
-        <Reveal delay={0.15}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              gap: "clamp(24px,4vw,64px)",
-              padding: "clamp(32px,5vh,60px) clamp(16px,6vw,60px)",
-            }}
+        <div className="text-right pb-2">
+          <p
+            className="font-mono text-[9px] tracking-[0.3em] leading-loose"
+            style={{ color: "rgba(194,120,0,0.5)" }}
           >
-            {[
-              { num: "6TH", sub: "Edition" },
-              { num: "2", sub: "Days" },
-              { num: "3", sub: "Committees" },
-              { num: "500+", sub: "Delegates" },
-            ].map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55, delay: i * 0.1, ease }}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 4,
-                  padding: "20px 32px",
-                  borderRadius: 14,
-                  background: "rgba(255,185,0,0.03)",
-                  border: "1px solid rgba(255,185,0,0.13)",
-                  minWidth: 100,
-                }}
-              >
-                <span
-                  className="shimmer-text"
-                  style={{
-                    fontFamily: "'Bebas Neue',sans-serif",
-                    fontSize: "clamp(2rem,5vw,3.2rem)",
-                    lineHeight: 1,
-                  }}
-                >
-                  {s.num}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Oswald',sans-serif",
-                    fontWeight: 500,
-                    fontSize: "0.5rem",
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,190,60,0.45)",
-                  }}
-                >
-                  {s.sub}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </Reveal>
-
-        {/* ══ BOTTOM TAG ══ */}
-        <Reveal delay={0.1}>
-          <div
-            style={{ textAlign: "center", padding: "0 0 clamp(40px,7vh,80px)" }}
+            APRIL 18 – 19, 2026
+          </p>
+          <p
+            className="font-mono text-[9px] tracking-[0.3em] leading-loose"
+            style={{ color: "rgba(194,120,0,0.5)" }}
           >
-            <p
-              style={{
-                fontFamily: "'Oswald',sans-serif",
-                fontWeight: 600,
-                fontSize: "0.58rem",
-                letterSpacing: "0.38em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.18)",
-              }}
-            >
-              Calcutta Boys' School · Concord XXVI
-            </p>
-            <div className="flex justify-center mt-3">
-              <div
-                style={{
-                  width: 1,
-                  height: 28,
-                  background:
-                    "linear-gradient(to bottom, rgba(255,190,60,0.35), transparent)",
-                }}
-              />
-            </div>
-          </div>
-        </Reveal>
+            EST. 1877
+          </p>
+          <p
+            className="font-mono text-[9px] tracking-[0.3em] leading-loose"
+            style={{ color: "rgba(194,120,0,0.5)" }}
+          >
+            ANNUAL FEST
+          </p>
+        </div>
       </div>
 
-      <Lightbox img={light} onClose={() => setLight(null)} />
+      {/* ── DIVIDER ── */}
+      <div className="flex items-center gap-4 px-20 py-6">
+        <span className="text-[6px]" style={{ color: "#c27800" }}>
+          ◆
+        </span>
+        <div
+          className="flex-1 h-px"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(194,120,0,0.7), rgba(194,120,0,0.08))",
+          }}
+        />
+        <span
+          className="font-mono text-[8px] tracking-[0.4em]"
+          style={{ color: "rgba(194,120,0,0.35)" }}
+        >
+          VISUAL ARCHIVE
+        </span>
+        <div
+          className="flex-1 h-px"
+          style={{
+            background:
+              "linear-gradient(to left, rgba(194,120,0,0.7), rgba(194,120,0,0.08))",
+          }}
+        />
+        <span className="text-[6px]" style={{ color: "#c27800" }}>
+          ◆
+        </span>
+      </div>
+
+      {/* ── RIBBON 1 ── */}
+      <StripLabel label="DAY ONE" />
+      <div style={{ paddingBottom: 20 }}>
+        <InfiniteRibbon items={strip1} direction={1} speed={38} />
+      </div>
+
+      {/* ── RIBBON 2 ── */}
+      <StripLabel label="DAY TWO" />
+      <InfiniteRibbon items={strip2} direction={-1} speed={44} />
     </div>
   );
 }
