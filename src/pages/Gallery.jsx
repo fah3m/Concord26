@@ -281,31 +281,49 @@ export default function Gallery() {
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600&family=Space+Mono:ital@0;1&display=swap');`}</style>
 
       {/* ── HEADER ── */}
-      <div className="flex items-flex-end justify-between px-20 pt-16 pb-0 relative">
+      <div className="relative px-6 md:px-20 pt-12 md:pt-16 pb-0">
         {/* Vertical gold rule */}
         <div
-          className="absolute left-20 top-16"
+          className="absolute left-6 md:left-20 top-12 md:top-16"
           style={{
             width: 2,
-            height: 56,
+            height: 48,
             background: "linear-gradient(to bottom, transparent, #c27800)",
           }}
         />
-        <div className="pl-5">
+
+        {/* Mobile: stacked layout */}
+        <div className="relative px-6 md:px-20 pt-26 md:pt-16 pb-0">
           <p
-            className="font-mono text-[9px] tracking-[0.35em] mb-3"
+            className="font-mono text-[8px] tracking-[0.25em] md:tracking-[0.35em] mb-3 leading-relaxed"
             style={{ color: "#c27800" }}
           >
-            CONCORD XXVI · REBIRTH OF AAHANS · CALCUTTA BOYS' SCHOOL
+            CONCORD XXVI · REBIRTH OF AAHANS
+            <span className="hidden md:inline"> · CALCUTTA BOYS' SCHOOL</span>
           </p>
           <h1
-            className="text-[clamp(52px,7vw,96px)] font-semibold leading-none tracking-[0.08em] uppercase text-white"
+            className="text-[clamp(44px,14vw,96px)] font-semibold leading-none tracking-[0.08em] uppercase text-white"
             style={{ fontFamily: "'Oswald', 'Arial Narrow', sans-serif" }}
           >
             GAL<span style={{ color: "#c27800" }}>L</span>ERY
           </h1>
+
+          {/* Mobile meta — sits below title, hidden on desktop */}
+          <div className="flex gap-5 mt-3 md:hidden">
+            {["APRIL 18–19, 2026", "EST. 1877", "ANNUAL FEST"].map((t) => (
+              <p
+                key={t}
+                className="font-mono text-[7px] tracking-[0.22em]"
+                style={{ color: "rgba(194,120,0,0.5)" }}
+              >
+                {t}
+              </p>
+            ))}
+          </div>
         </div>
-        <div className="text-right pb-2">
+
+        {/* Desktop-only right column */}
+        <div className="hidden md:block absolute right-20 bottom-2 text-right">
           <p
             className="font-mono text-[9px] tracking-[0.3em] leading-loose"
             style={{ color: "rgba(194,120,0,0.5)" }}
@@ -328,7 +346,7 @@ export default function Gallery() {
       </div>
 
       {/* ── DIVIDER ── */}
-      <div className="flex items-center gap-4 px-20 py-6">
+      <div className="flex items-center gap-3 md:gap-4 px-6 md:px-20 py-5 md:py-6">
         <span className="text-[6px]" style={{ color: "#c27800" }}>
           ◆
         </span>
@@ -340,7 +358,7 @@ export default function Gallery() {
           }}
         />
         <span
-          className="font-mono text-[8px] tracking-[0.4em]"
+          className="font-mono text-[7px] md:text-[8px] tracking-[0.3em] md:tracking-[0.4em]"
           style={{ color: "rgba(194,120,0,0.35)" }}
         >
           VISUAL ARCHIVE
