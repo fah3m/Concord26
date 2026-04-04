@@ -21,12 +21,19 @@ const fadeIn = (delay = 0) => ({
 
 const Home = () => {
   return (
+    // h-1350 controls total scroll length for BlobBackground — keep as-is
     <div className="h-1350 overflow-x-hidden">
       <BlobBackground />
 
+      {/*
+        [FIX] h-svh = 100svh = smallest viewport height (browser chrome always
+        visible). This is the safe ceiling on mobile — content will never be
+        taller than this, so nothing overflows. Desktop keeps h-screen because
+        svh == dvh == lvh on desktop anyway.
+      */}
       <div
         id="home"
-        className="h-screen w-screen p-0 m-0 relative overflow-hidden"
+        className="h-svh w-screen p-0 m-0 relative overflow-hidden"
       >
         {/* Noise grain overlay */}
         <div
@@ -60,7 +67,6 @@ const Home = () => {
 
         {/* ── DESKTOP (lg+) ── */}
 
-        {/* Phoenix — motion.div handles fade only, img keeps ALL original positioning */}
         <motion.div
           className="hidden lg:block absolute pointer-events-none z-[2]"
           initial={{ opacity: 0 }}
@@ -117,7 +123,6 @@ const Home = () => {
             transform: "translateY(-50%)",
           }}
         >
-          {/* Eyebrow */}
           <motion.div
             className="flex items-center gap-3 mb-6"
             {...fadeUp(0.05, 14)}
@@ -134,7 +139,6 @@ const Home = () => {
             </span>
           </motion.div>
 
-          {/* CONCORD */}
           <motion.h1
             className="block font-main font-black uppercase"
             initial={{ opacity: 0, y: 32, scale: 0.97 }}
@@ -156,7 +160,6 @@ const Home = () => {
             CONCORD
           </motion.h1>
 
-          {/* Edition line */}
           <motion.div
             className="flex items-center gap-4 mt-5"
             {...fadeUp(0.3, 12)}
@@ -173,7 +176,6 @@ const Home = () => {
             </span>
           </motion.div>
 
-          {/* Ornament */}
           <motion.div
             className="flex items-center gap-4 mt-10 mb-10"
             {...fadeIn(0.42)}
@@ -216,7 +218,6 @@ const Home = () => {
             />
           </motion.div>
 
-          {/* Event info */}
           <motion.div className="flex items-start gap-10" {...fadeUp(0.5, 10)}>
             <div>
               <p className="font-main text-[0.58rem] tracking-[0.45em] uppercase text-amber-400/45 mb-2 font-bold">
@@ -252,7 +253,6 @@ const Home = () => {
             </div>
           </motion.div>
 
-          {/* Bottom rule */}
           <motion.div className="flex items-center mt-10" {...fadeIn(0.6)}>
             <div
               style={{
@@ -294,24 +294,33 @@ const Home = () => {
         </motion.div>
 
         {/* ── MOBILE + TABLET (< lg) ── */}
-        <div className="lg:hidden absolute inset-0 z-10 flex flex-col justify-between py-[3vh] px-6">
+        {/*
+          [FIX] Changed from absolute inset-0 to absolute inset-x-0 with
+          explicit top/bottom bounds so it sits within the SVH container.
+          flex + justify-between distributes content evenly across the
+          available height — no item overflows regardless of navbar size,
+          because the parent is already capped at 100svh and overflow:hidden.
+
+          Spacing reduced across the board (py, gaps, phoenix height) so
+          all 6 flex children fit comfortably on even small phones (~667px).
+        */}
+        <div className="lg:hidden absolute inset-x-0 top-0 bottom-0 z-10 flex flex-col justify-between py-[2svh] px-5">
           {/* Top bar */}
           <motion.div
             className="flex justify-between items-center"
             {...fadeUp(0.05, 10)}
           >
-            <span className="font-main text-[0.6rem] tracking-[0.38em] uppercase text-amber-500/60 font-bold">
+            <span className="font-main text-[0.58rem] tracking-[0.38em] uppercase text-amber-500/60 font-bold">
               Annual Fest
             </span>
-            <span className="font-main text-[0.6rem] tracking-[0.25em] uppercase text-white/30 font-bold">
+            <span className="font-main text-[0.58rem] tracking-[0.25em] uppercase text-white/30 font-bold">
               Issue XXVI
             </span>
           </motion.div>
 
-          {/* Phoenix mobile — scale fade, no position interference */}
+          {/* Phoenix — height capped with svh so it never pushes content */}
           <motion.div
             className="flex items-center justify-center"
-            style={{ height: "42vh" }}
             initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.0, delay: 0.2, ease }}
@@ -322,7 +331,7 @@ const Home = () => {
               draggable="false"
               className="pointer-events-none"
               style={{
-                height: "42vh",
+                height: "clamp(120px, 32svh, 260px)",
                 filter:
                   "brightness(1.4) sepia(1) saturate(4) hue-rotate(330deg) drop-shadow(0 0 30px rgba(255,140,20,0.9)) drop-shadow(0 0 60px rgba(255,80,0,0.6)) drop-shadow(0 0 90px rgba(200,40,0,0.4))",
                 mixBlendMode: "screen",
@@ -372,17 +381,17 @@ const Home = () => {
           {/* Text block */}
           <div className="flex flex-col items-center text-center">
             <motion.div
-              className="flex items-center gap-2 mb-3"
+              className="flex items-center gap-2 mb-2"
               {...fadeUp(0.22, 12)}
             >
-              <span className="font-main text-[0.58rem] tracking-[0.4em] uppercase text-amber-400/55 font-bold">
+              <span className="font-main text-[0.55rem] tracking-[0.4em] uppercase text-amber-400/55 font-bold">
                 Est. 1877
               </span>
               <span
                 className="w-4 h-px flex-shrink-0"
                 style={{ background: "rgba(255,190,60,0.3)" }}
               />
-              <span className="font-main text-[0.58rem] tracking-[0.25em] uppercase text-white/28 font-bold">
+              <span className="font-main text-[0.55rem] tracking-[0.25em] uppercase text-white/28 font-bold">
                 Calcutta Boys' School
               </span>
             </motion.div>
@@ -393,7 +402,7 @@ const Home = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.85, delay: 0.3, ease }}
               style={{
-                fontSize: "clamp(3.2rem, 18vw, 5.5rem)",
+                fontSize: "clamp(3rem, 17vw, 5rem)",
                 lineHeight: 0.88,
                 letterSpacing: "0.04em",
                 WebkitTextFillColor: "transparent",
@@ -409,17 +418,17 @@ const Home = () => {
             </motion.h1>
 
             <motion.div
-              className="flex items-center gap-3 mt-3"
+              className="flex items-center gap-3 mt-2"
               {...fadeUp(0.4, 10)}
             >
-              <span className="font-main text-[0.65rem] tracking-[0.3em] uppercase text-amber-400/70 font-bold">
+              <span className="font-main text-[0.62rem] tracking-[0.3em] uppercase text-amber-400/70 font-bold">
                 2026 Edition
               </span>
               <span
-                className="w-5 h-px flex-shrink-0"
+                className="w-4 h-px flex-shrink-0"
                 style={{ background: "rgba(255,190,60,0.35)" }}
               />
-              <span className="font-main text-white/45 text-[0.78rem] tracking-[0.15em] uppercase font-bold">
+              <span className="font-main text-white/45 text-[0.74rem] tracking-[0.15em] uppercase font-bold">
                 Rebirth of Aahans
               </span>
             </motion.div>
@@ -427,38 +436,38 @@ const Home = () => {
 
           {/* Event info */}
           <motion.div
-            className="flex items-start justify-center gap-6"
+            className="flex items-start justify-center gap-5"
             {...fadeUp(0.5, 10)}
           >
             <div className="text-center">
-              <p className="font-main text-[0.52rem] tracking-[0.4em] uppercase text-amber-400/40 mb-1.5 font-bold">
+              <p className="font-main text-[0.5rem] tracking-[0.4em] uppercase text-amber-400/40 mb-1 font-bold">
                 Date
               </p>
-              <p className="font-main text-[0.78rem] tracking-[0.1em] uppercase text-white/60 font-bold">
+              <p className="font-main text-[0.75rem] tracking-[0.08em] uppercase text-white/60 font-bold">
                 Apr 18–19, 2026
               </p>
             </div>
             <span
-              className="w-px h-8 self-center"
+              className="w-px h-7 self-center"
               style={{ background: "rgba(255,190,60,0.15)" }}
             />
             <div className="text-center">
-              <p className="font-main text-[0.52rem] tracking-[0.4em] uppercase text-amber-400/40 mb-1.5 font-bold">
+              <p className="font-main text-[0.5rem] tracking-[0.4em] uppercase text-amber-400/40 mb-1 font-bold">
                 Venue
               </p>
-              <p className="font-main text-[0.78rem] tracking-[0.1em] uppercase text-white/60 font-bold">
+              <p className="font-main text-[0.75rem] tracking-[0.08em] uppercase text-white/60 font-bold">
                 CBS Campus
               </p>
             </div>
             <span
-              className="w-px h-8 self-center"
+              className="w-px h-7 self-center"
               style={{ background: "rgba(255,190,60,0.15)" }}
             />
             <div className="text-center">
-              <p className="font-main text-[0.52rem] tracking-[0.4em] uppercase text-amber-400/40 mb-1.5 font-bold">
+              <p className="font-main text-[0.5rem] tracking-[0.4em] uppercase text-amber-400/40 mb-1 font-bold">
                 Issue
               </p>
-              <p className="font-main text-[0.78rem] tracking-[0.1em] uppercase text-white/60 font-bold">
+              <p className="font-main text-[0.75rem] tracking-[0.08em] uppercase text-white/60 font-bold">
                 XXVI
               </p>
             </div>
@@ -500,7 +509,7 @@ const Home = () => {
       </div>
 
       <div id="gallery">
-       <Gallery />
+        <Gallery />
       </div>
     </div>
   );

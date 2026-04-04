@@ -192,8 +192,26 @@ function drawFragment(ctx, cx, cy, size, r, g, b, alpha = 1, seed = 0) {
 // ─── Scroll ───────────────────────────────────────────────────────────────────
 function getScrollPct() {
   const el = document.documentElement;
+  const scrollY = window.pageYOffset ?? el.scrollTop;
   const max = el.scrollHeight - el.clientHeight;
-  return max > 0 ? clamp(el.scrollTop / max, 0, 1) : 0;
+  return max > 0 ? clamp(scrollY / max, 0, 1) : 0;
+}
+
+// ─── Stable viewport height ───────────────────────────────────────────────────
+// On mobile, window.innerHeight AND clientHeight both shrink when the browser
+// chrome hides (address bar slides away). So we track the largest height seen
+// and only ever grow the canvas — never shrink it. This means the canvas always
+// covers the fully-expanded viewport, even before the chrome has had a chance
+// to hide. We seed with screen.height as an upper bound on first paint.
+let _maxSeenHeight = window.screen?.height ?? window.innerHeight;
+function getStableHeight() {
+  const h = Math.max(
+    window.innerHeight,
+    document.documentElement.clientHeight,
+    _maxSeenHeight,
+  );
+  _maxSeenHeight = Math.max(_maxSeenHeight, h);
+  return _maxSeenHeight;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -210,23 +228,41 @@ export default function BlobBackground() {
       willReadFrequently: false,
     });
 
-    // Only clear the glow cache and resize width on actual width changes.
-    // Mobile browsers fire resize when their chrome bars hide/show (height only),
-    // which would blank the canvas for a frame and cause a white flash.
+    let lastT = -1;
     let lastResizeW = -1;
+    let lastResizeH = -1;
+
     function resize() {
       const newW = Math.round(window.innerWidth * SCALE);
-      if (newW === lastResizeW) {
-        // Pure height change (mobile browser bar toggling) — update height only
-        canvas.height = Math.round(window.innerHeight * SCALE);
-        return;
-      }
+      // getStableHeight() returns the max height ever seen, seeded with
+      // screen.height — so the canvas is sized for the tallest possible
+      // viewport from the very first frame, before the chrome has hidden.
+      const newH = Math.round(getStableHeight() * SCALE);
+
+      const wChanged = newW !== lastResizeW;
+      // Only grow height, never shrink — avoids blank frames when chrome hides
+      const hChanged = newH > lastResizeH;
+
+      if (!wChanged && !hChanged) return;
+
       lastResizeW = newW;
+      lastResizeH = newH;
       canvas.width = newW;
-      canvas.height = Math.round(window.innerHeight * SCALE);
+      canvas.height = newH;
       glowCache.clear();
+      lastT = -1;
     }
+
     resize();
+
+    // visualViewport fires on Android Chrome when the on-screen keyboard or
+    // browser chrome moves, catching cases that plain "resize" misses.
+    const vvp = window.visualViewport;
+    const onVVPResize = () => resize();
+    if (vvp) {
+      vvp.addEventListener("resize", onVVPResize, { passive: true });
+    }
+
     window.addEventListener("resize", resize, { passive: true });
     window.addEventListener(
       "scroll",
@@ -235,8 +271,6 @@ export default function BlobBackground() {
       },
       { passive: true },
     );
-
-    let lastT = -1;
 
     function render() {
       smoothRef.current +=
@@ -256,11 +290,9 @@ export default function BlobBackground() {
       const SIZE = Math.min(W, H) * 0.62;
       const diag = Math.sqrt(W * W + H * H);
 
-      // Darker background
       ctx.fillStyle = "#0c0a05";
       ctx.fillRect(0, 0, W, H);
 
-      // Deeper, darker burnt-amber blob
       function drawOrangeAtCorner(cx, cy, sz, alpha = 1) {
         glow(ctx, cx, cy, sz * 1.0, 40, 8, 4, 0.35 * alpha);
         glow(ctx, cx, cy, sz * 0.8, 95, 25, 8, 0.48 * alpha);
@@ -342,9 +374,11 @@ export default function BlobBackground() {
     }
 
     rafRef.current = requestAnimationFrame(render);
+
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", resize);
+      if (vvp) vvp.removeEventListener("resize", onVVPResize);
     };
   }, []);
 
@@ -356,7 +390,9 @@ export default function BlobBackground() {
           position: "fixed",
           inset: 0,
           width: "100%",
-          height: "100%",
+          // svh = smallest viewport height (chrome always visible) — canvas
+          // drawing buffer is sized to screen.height so it always overfills.
+          height: "100lvh",
           zIndex: -1,
           imageRendering: "auto",
           willChange: "transform",
@@ -368,7 +404,7 @@ export default function BlobBackground() {
           position: "fixed",
           inset: 0,
           width: "100%",
-          height: "100%",
+          height: "100lvh",
           zIndex: -1,
           pointerEvents: "none",
         }}
@@ -388,8 +424,8 @@ export default function BlobBackground() {
           <feComposite in="b" in2="SourceGraphic" operator="atop" />
         </filter>
         <rect
-          width="100vw"
-          height="100vh"
+          width="100%"
+          height="100%"
           fill="#0c0a05"
           filter="url(#grain)"
           opacity={GRAIN_OPACITY}
