@@ -210,8 +210,19 @@ export default function BlobBackground() {
       willReadFrequently: false,
     });
 
+    // Only clear the glow cache and resize width on actual width changes.
+    // Mobile browsers fire resize when their chrome bars hide/show (height only),
+    // which would blank the canvas for a frame and cause a white flash.
+    let lastResizeW = -1;
     function resize() {
-      canvas.width = Math.round(window.innerWidth * SCALE);
+      const newW = Math.round(window.innerWidth * SCALE);
+      if (newW === lastResizeW) {
+        // Pure height change (mobile browser bar toggling) — update height only
+        canvas.height = Math.round(window.innerHeight * SCALE);
+        return;
+      }
+      lastResizeW = newW;
+      canvas.width = newW;
       canvas.height = Math.round(window.innerHeight * SCALE);
       glowCache.clear();
     }
@@ -349,6 +360,7 @@ export default function BlobBackground() {
           zIndex: -1,
           imageRendering: "auto",
           willChange: "transform",
+          backgroundColor: "#0c0a05",
         }}
       />
       <svg
