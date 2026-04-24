@@ -172,7 +172,7 @@ const Home = () => {
               style={{ background: "rgba(255,190,60,0.35)" }}
             />
             <span className="font-main text-white/50 text-[0.88rem] tracking-[0.18em] uppercase font-bold">
-              Rebirth of Aahans
+              Resurge.Reclaim.Reign.
             </span>
           </motion.div>
 
@@ -224,7 +224,7 @@ const Home = () => {
                 Date
               </p>
               <p className="font-main text-[0.92rem] tracking-[0.15em] uppercase text-white/65 font-bold">
-                April 18 – 19, 2026
+                July 1 – 3, 2026
               </p>
             </div>
             <span

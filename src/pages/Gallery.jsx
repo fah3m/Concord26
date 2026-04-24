@@ -2,22 +2,118 @@ import { useState, useEffect, useCallback, useRef, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const allItems = [
-  { id: 1,  label: "OPENING CEREMONY",    sub: "2026 · MAIN STAGE",      imgUrl: "/gallery/1.jpg",  day: 1 },
-  { id: 2,  label: "CULTURAL NIGHT",      sub: "PERFORMANCES",            imgUrl: "/gallery/2.jpg",  day: 1 },
-  { id: 3,  label: "SPORTS ARENA",        sub: "TRACK & FIELD",           imgUrl: "/gallery/3.jpg",  day: 1 },
-  { id: 4,  label: "ART EXHIBITION",      sub: "PHOENIX GALLERY",         imgUrl: "/gallery/4.jpg",  day: 1 },
-  { id: 5,  label: "MUSIC SHOWCASE",      sub: "LIVE ACTS",               imgUrl: "/gallery/5.jpg",  day: 1 },
-  { id: 6,  label: "BEST PERFORMER",      sub: "AWARDS 2026",             imgUrl: "/gallery/6.jpg",  day: 1 },
-  { id: 7,  label: "CROWD MOMENTS",       sub: "DAY ONE",                 imgUrl: "/gallery/7.jpg",  day: 1 },
-  { id: 8,  label: "SEC-GEN ADDRESS",     sub: "INAUGURAL SPEECH",        imgUrl: "/gallery/8.jpg",  day: 1 },
-  { id: 9,  label: "BACKSTAGE LIFE",      sub: "BEHIND THE SCENES",       imgUrl: "/gallery/9.jpg",  day: 2 },
-  { id: 10, label: "DRAMA & THEATRE",     sub: "MAIN AUDITORIUM",         imgUrl: "/gallery/10.jpg", day: 2 },
-  { id: 11, label: "FOOD STALLS",         sub: "FEST FLAVOURS",           imgUrl: "/gallery/11.jpg", day: 2 },
-  { id: 12, label: "CROWD PORTRAITS",     sub: "CLASS OF 2026",           imgUrl: "/gallery/12.jpg", day: 2 },
-  { id: 13, label: "PHOTOGRAPHY AWARD",   sub: "BEST CAPTURE",            imgUrl: "/gallery/13.jpg", day: 2 },
-  { id: 14, label: "FACULTY FELICITATION",sub: "GRATITUDE SESSION",       imgUrl: "/gallery/14.jpg", day: 2 },
-  { id: 15, label: "FINAL MOMENTS",       sub: "GOODBYES & BONDS",        imgUrl: "/gallery/15.jpg", day: 2 },
-  { id: 16, label: "REBIRTH OF AAHANS",   sub: "THEME REVEAL",            imgUrl: "/gallery/16.jpg", day: 2 },
+  {
+    id: 1,
+    label: "OPENING CEREMONY",
+    sub: "2026 · MAIN STAGE",
+    imgUrl: "/gallery/1.jpg",
+    day: 1,
+  },
+  {
+    id: 2,
+    label: "CULTURAL NIGHT",
+    sub: "PERFORMANCES",
+    imgUrl: "/gallery/2.jpg",
+    day: 1,
+  },
+  {
+    id: 3,
+    label: "SPORTS ARENA",
+    sub: "TRACK & FIELD",
+    imgUrl: "/gallery/3.jpg",
+    day: 1,
+  },
+  {
+    id: 4,
+    label: "ART EXHIBITION",
+    sub: "PHOENIX GALLERY",
+    imgUrl: "/gallery/4.jpg",
+    day: 1,
+  },
+  {
+    id: 5,
+    label: "MUSIC SHOWCASE",
+    sub: "LIVE ACTS",
+    imgUrl: "/gallery/5.jpg",
+    day: 1,
+  },
+  {
+    id: 6,
+    label: "BEST PERFORMER",
+    sub: "AWARDS 2026",
+    imgUrl: "/gallery/6.jpg",
+    day: 1,
+  },
+  {
+    id: 7,
+    label: "CROWD MOMENTS",
+    sub: "DAY ONE",
+    imgUrl: "/gallery/7.jpg",
+    day: 1,
+  },
+  {
+    id: 8,
+    label: "SEC-GEN ADDRESS",
+    sub: "INAUGURAL SPEECH",
+    imgUrl: "/gallery/8.jpg",
+    day: 1,
+  },
+  {
+    id: 9,
+    label: "BACKSTAGE LIFE",
+    sub: "BEHIND THE SCENES",
+    imgUrl: "/gallery/9.jpg",
+    day: 2,
+  },
+  {
+    id: 10,
+    label: "DRAMA & THEATRE",
+    sub: "MAIN AUDITORIUM",
+    imgUrl: "/gallery/10.jpg",
+    day: 2,
+  },
+  {
+    id: 11,
+    label: "FOOD STALLS",
+    sub: "FEST FLAVOURS",
+    imgUrl: "/gallery/11.jpg",
+    day: 2,
+  },
+  {
+    id: 12,
+    label: "CROWD PORTRAITS",
+    sub: "CLASS OF 2026",
+    imgUrl: "/gallery/12.jpg",
+    day: 2,
+  },
+  {
+    id: 13,
+    label: "PHOTOGRAPHY AWARD",
+    sub: "BEST CAPTURE",
+    imgUrl: "/gallery/13.jpg",
+    day: 2,
+  },
+  {
+    id: 14,
+    label: "FACULTY FELICITATION",
+    sub: "GRATITUDE SESSION",
+    imgUrl: "/gallery/14.jpg",
+    day: 2,
+  },
+  {
+    id: 15,
+    label: "FINAL MOMENTS",
+    sub: "GOODBYES & BONDS",
+    imgUrl: "/gallery/15.jpg",
+    day: 2,
+  },
+  {
+    id: 16,
+    label: "REBIRTH OF AAHANS",
+    sub: "THEME REVEAL",
+    imgUrl: "/gallery/16.jpg",
+    day: 2,
+  },
 ];
 
 const strip1 = allItems.filter((i) => i.day === 1);
@@ -39,9 +135,12 @@ const gradients = [
 ];
 
 // ── Shared transition configs (defined once, never recreated) ─────────────
-const CARD_HOVER_TRANSITION = { duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] };
-const LIGHTBOX_TRANSITION   = { duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] };
-const IMG_TRANSITION        = { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] };
+const CARD_HOVER_TRANSITION = {
+  duration: 0.18,
+  ease: [0.25, 0.46, 0.45, 0.94],
+};
+const LIGHTBOX_TRANSITION = { duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] };
+const IMG_TRANSITION = { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] };
 
 // ── LIGHTBOX ─────────────────────────────────────────────────────────────
 function Lightbox({ items, startIndex, onClose }) {
@@ -50,24 +149,36 @@ function Lightbox({ items, startIndex, onClose }) {
 
   // Touch-swipe support
   const touchStartX = useRef(null);
-  const onTouchStart = useCallback((e) => { touchStartX.current = e.touches[0].clientX; }, []);
-  const onTouchEnd   = useCallback((e) => {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 40) dx < 0
-      ? setIdx((i) => (i + 1) % items.length)
-      : setIdx((i) => (i - 1 + items.length) % items.length);
-    touchStartX.current = null;
-  }, [items.length]);
+  const onTouchStart = useCallback((e) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+  const onTouchEnd = useCallback(
+    (e) => {
+      if (touchStartX.current === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      if (Math.abs(dx) > 40)
+        dx < 0
+          ? setIdx((i) => (i + 1) % items.length)
+          : setIdx((i) => (i - 1 + items.length) % items.length);
+      touchStartX.current = null;
+    },
+    [items.length],
+  );
 
-  const prev = useCallback(() => setIdx((i) => (i - 1 + items.length) % items.length), [items.length]);
-  const next = useCallback(() => setIdx((i) => (i + 1) % items.length),               [items.length]);
+  const prev = useCallback(
+    () => setIdx((i) => (i - 1 + items.length) % items.length),
+    [items.length],
+  );
+  const next = useCallback(
+    () => setIdx((i) => (i + 1) % items.length),
+    [items.length],
+  );
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape")      onClose();
-      if (e.key === "ArrowLeft")   prev();
-      if (e.key === "ArrowRight")  next();
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -75,14 +186,16 @@ function Lightbox({ items, startIndex, onClose }) {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   const CORNERS_SVG = [
-    ["top-0 left-0",    "M1 12 L1 1 L12 1"],
-    ["top-0 right-0",   "M23 12 L23 1 L12 1"],
+    ["top-0 left-0", "M1 12 L1 1 L12 1"],
+    ["top-0 right-0", "M23 12 L23 1 L12 1"],
     ["bottom-0 left-0", "M1 12 L1 23 L12 23"],
-    ["bottom-0 right-0","M23 12 L23 23 L12 23"],
+    ["bottom-0 right-0", "M23 12 L23 23 L12 23"],
   ];
 
   return (
@@ -98,7 +211,12 @@ function Lightbox({ items, startIndex, onClose }) {
       onTouchEnd={onTouchEnd}
     >
       {CORNERS_SVG.map(([cls, d], i) => (
-        <svg key={i} className={`absolute ${cls} w-8 h-8 m-4 pointer-events-none`} viewBox="0 0 24 24" fill="none">
+        <svg
+          key={i}
+          className={`absolute ${cls} w-8 h-8 m-4 pointer-events-none`}
+          viewBox="0 0 24 24"
+          fill="none"
+        >
           <path d={d} stroke="#c27800" strokeWidth="1" opacity="0.5" />
         </svg>
       ))}
@@ -106,11 +224,19 @@ function Lightbox({ items, startIndex, onClose }) {
       {/* Close */}
       <button
         className="absolute top-5 right-5 z-10 w-9 h-9 flex items-center justify-center rounded-full"
-        style={{ background: "rgba(194,120,0,0.12)", border: "1px solid rgba(194,120,0,0.25)" }}
+        style={{
+          background: "rgba(194,120,0,0.12)",
+          border: "1px solid rgba(194,120,0,0.25)",
+        }}
         onClick={onClose}
       >
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M1 1L11 11M11 1L1 11" stroke="#c27800" strokeWidth="1.5" strokeLinecap="round" />
+          <path
+            d="M1 1L11 11M11 1L1 11"
+            stroke="#c27800"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
         </svg>
       </button>
 
@@ -119,7 +245,8 @@ function Lightbox({ items, startIndex, onClose }) {
         className="absolute top-5 left-1/2 -translate-x-1/2 font-mono text-[9px] tracking-[0.4em]"
         style={{ color: "rgba(194,120,0,0.45)" }}
       >
-        {String(idx + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+        {String(idx + 1).padStart(2, "0")} /{" "}
+        {String(items.length).padStart(2, "0")}
       </div>
 
       {/* Image */}
@@ -133,7 +260,9 @@ function Lightbox({ items, startIndex, onClose }) {
         transition={IMG_TRANSITION}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`absolute inset-0 bg-gradient-to-br ${gradients[idx % gradients.length]} rounded-sm`} />
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${gradients[idx % gradients.length]} rounded-sm`}
+        />
         <img
           src={item.imgUrl}
           alt={item.label}
@@ -144,15 +273,32 @@ function Lightbox({ items, startIndex, onClose }) {
         />
         <div
           className="absolute inset-0 rounded-sm pointer-events-none"
-          style={{ boxShadow: "inset 0 0 0 1px rgba(194,120,0,0.2), 0 0 60px rgba(0,0,0,0.8)" }}
+          style={{
+            boxShadow:
+              "inset 0 0 0 1px rgba(194,120,0,0.2), 0 0 60px rgba(0,0,0,0.8)",
+          }}
         />
         <div className="absolute -bottom-12 left-0 right-0 flex items-end justify-between px-1">
           <div>
-            <p className="font-mono text-[8px] tracking-[0.35em] mb-1" style={{ color: "#c27800" }}>{item.sub}</p>
-            <p className="text-[14px] font-semibold tracking-[0.12em] text-white uppercase"
-               style={{ fontFamily: "'Oswald','Arial Narrow',sans-serif" }}>{item.label}</p>
+            <p
+              className="font-mono text-[8px] tracking-[0.35em] mb-1"
+              style={{ color: "#c27800" }}
+            >
+              {item.sub}
+            </p>
+            <p
+              className="text-[14px] font-semibold tracking-[0.12em] text-white uppercase"
+              style={{ fontFamily: "'Oswald','Arial Narrow',sans-serif" }}
+            >
+              {item.label}
+            </p>
           </div>
-          <p className="font-mono text-[8px] tracking-[0.3em]" style={{ color: "rgba(194,120,0,0.35)" }}>DAY {item.day}</p>
+          <p
+            className="font-mono text-[8px] tracking-[0.3em]"
+            style={{ color: "rgba(194,120,0,0.35)" }}
+          >
+            DAY {item.day}
+          </p>
         </div>
       </motion.div>
 
@@ -164,12 +310,25 @@ function Lightbox({ items, startIndex, onClose }) {
         <button
           key={label}
           className={`absolute ${side} top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full z-10`}
-          style={{ background: "rgba(194,120,0,0.1)", border: "1px solid rgba(194,120,0,0.22)", transition: "background 0.15s" }}
-          onClick={(e) => { e.stopPropagation(); fn(); }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(194,120,0,0.22)")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(194,120,0,0.1)")}
+          style={{
+            background: "rgba(194,120,0,0.1)",
+            border: "1px solid rgba(194,120,0,0.22)",
+            transition: "background 0.15s",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            fn();
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.background = "rgba(194,120,0,0.22)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.background = "rgba(194,120,0,0.1)")
+          }
         >
-          <span className="font-mono text-sm" style={{ color: "#c27800" }}>{label}</span>
+          <span className="font-mono text-sm" style={{ color: "#c27800" }}>
+            {label}
+          </span>
         </button>
       ))}
 
@@ -181,17 +340,33 @@ function Lightbox({ items, startIndex, onClose }) {
         {items.map((it, i) => (
           <button
             key={it.id}
-            onClick={(e) => { e.stopPropagation(); setIdx(i); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIdx(i);
+            }}
             className="relative flex-shrink-0 rounded-[2px] overflow-hidden"
             style={{
-              width: 36, height: 26,
-              outline: i === idx ? "1px solid rgba(194,120,0,0.8)" : "1px solid transparent",
+              width: 36,
+              height: 26,
+              outline:
+                i === idx
+                  ? "1px solid rgba(194,120,0,0.8)"
+                  : "1px solid transparent",
               opacity: i === idx ? 1 : 0.4,
               transition: "opacity 0.15s, outline 0.15s",
             }}
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${gradients[i % gradients.length]}`} />
-            <img src={it.imgUrl} alt="" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${gradients[i % gradients.length]}`}
+            />
+            <img
+              src={it.imgUrl}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+              draggable="false"
+              loading="lazy"
+              decoding="async"
+            />
           </button>
         ))}
       </div>
@@ -208,7 +383,8 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
     <div
       className="relative flex-shrink-0 overflow-hidden cursor-pointer"
       style={{
-        width: CARD_W, height: 240,
+        width: CARD_W,
+        height: 240,
         // CSS-driven transform — composited on GPU, no JS per frame
         transform: hovered ? "scale(1.04)" : "scale(1)",
         transition: "transform 0.18s cubic-bezier(0.25,0.46,0.45,0.94)",
@@ -221,7 +397,9 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
       onTouchEnd={() => setHovered(false)}
       onClick={onOpen}
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]}`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]}`}
+      />
       {item.imgUrl && (
         <img
           src={item.imgUrl}
@@ -236,14 +414,18 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
       {/* Vignette */}
       <div
         className="absolute inset-0"
-        style={{ boxShadow: "inset 0 0 50px rgba(0,0,0,0.65), inset 0 0 1px rgba(194,120,0,0.3)" }}
+        style={{
+          boxShadow:
+            "inset 0 0 50px rgba(0,0,0,0.65), inset 0 0 1px rgba(194,120,0,0.3)",
+        }}
       />
 
       {/* Bottom gradient */}
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)",
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 55%)",
           opacity: hovered ? 1 : 0.7,
           transition: "opacity 0.18s",
         }}
@@ -253,7 +435,8 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
-          background: "linear-gradient(to right, transparent, #c27800, transparent)",
+          background:
+            "linear-gradient(to right, transparent, #c27800, transparent)",
           opacity: hovered ? 1 : 0,
           transition: "opacity 0.18s",
         }}
@@ -270,24 +453,45 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
       >
         <div
           className="w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: "rgba(194,120,0,0.18)", border: "1px solid rgba(194,120,0,0.4)" }}
+          style={{
+            background: "rgba(194,120,0,0.18)",
+            border: "1px solid rgba(194,120,0,0.4)",
+          }}
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M1 4V1H4M8 1H11V4M11 8V11H8M4 11H1V8" stroke="#c27800" strokeWidth="1.3" strokeLinecap="round" />
+            <path
+              d="M1 4V1H4M8 1H11V4M11 8V11H8M4 11H1V8"
+              stroke="#c27800"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
           </svg>
         </div>
       </div>
 
       {/* Corner brackets */}
-      <svg className="absolute top-3 left-3 w-5 h-5" style={{ opacity: hovered ? 0.9 : 0.35, transition: "opacity 0.18s" }} viewBox="0 0 20 20" fill="none">
+      <svg
+        className="absolute top-3 left-3 w-5 h-5"
+        style={{ opacity: hovered ? 0.9 : 0.35, transition: "opacity 0.18s" }}
+        viewBox="0 0 20 20"
+        fill="none"
+      >
         <path d="M1 9 L1 1 L9 1" stroke="#c27800" strokeWidth="1.5" />
       </svg>
-      <svg className="absolute bottom-3 right-3 w-5 h-5" style={{ opacity: hovered ? 0.9 : 0.35, transition: "opacity 0.18s" }} viewBox="0 0 20 20" fill="none">
+      <svg
+        className="absolute bottom-3 right-3 w-5 h-5"
+        style={{ opacity: hovered ? 0.9 : 0.35, transition: "opacity 0.18s" }}
+        viewBox="0 0 20 20"
+        fill="none"
+      >
         <path d="M19 11 L19 19 L11 19" stroke="#c27800" strokeWidth="1.5" />
       </svg>
 
       {/* Index number */}
-      <span className="absolute top-4 right-5 font-mono text-[9px] tracking-widest" style={{ color: "rgba(194,120,0,0.4)" }}>
+      <span
+        className="absolute top-4 right-5 font-mono text-[9px] tracking-widest"
+        style={{ color: "rgba(194,120,0,0.4)" }}
+      >
         {String((index % 8) + 1).padStart(2, "0")}
       </span>
 
@@ -300,9 +504,18 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
           transition: "transform 0.18s, opacity 0.18s",
         }}
       >
-        <p className="text-[8px] tracking-[0.3em] mb-1 font-mono" style={{ color: "#c27800" }}>{item.sub}</p>
-        <p className="text-[13px] font-semibold tracking-[0.14em] text-white uppercase"
-           style={{ fontFamily: "'Oswald','Arial Narrow',sans-serif" }}>{item.label}</p>
+        <p
+          className="text-[8px] tracking-[0.3em] mb-1 font-mono"
+          style={{ color: "#c27800" }}
+        >
+          {item.sub}
+        </p>
+        <p
+          className="text-[13px] font-semibold tracking-[0.14em] text-white uppercase"
+          style={{ fontFamily: "'Oswald','Arial Narrow',sans-serif" }}
+        >
+          {item.label}
+        </p>
       </div>
     </div>
   );
@@ -314,8 +527,8 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
 function InfiniteRibbon({ items, direction = 1, speed = 38, onCardClick }) {
   const tripled = [...items, ...items, ...items];
   const singleSetW = items.length * CARD_STRIDE;
-  const duration   = singleSetW / speed;
-  const animName   = direction > 0 ? "ribbonFwd" : "ribbonRev";
+  const duration = singleSetW / speed;
+  const animName = direction > 0 ? "ribbonFwd" : "ribbonRev";
   const [paused, setPaused] = useState(false);
 
   // Stable per-card open handlers
@@ -347,10 +560,18 @@ function InfiniteRibbon({ items, direction = 1, speed = 38, onCardClick }) {
       `}</style>
 
       {/* Edge fades */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none"
-           style={{ background: "linear-gradient(to right, #0d0700, transparent)" }} />
-      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none"
-           style={{ background: "linear-gradient(to left,  #0d0700, transparent)" }} />
+      <div
+        className="absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none"
+        style={{
+          background: "linear-gradient(to right, #0d0700, transparent)",
+        }}
+      />
+      <div
+        className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none"
+        style={{
+          background: "linear-gradient(to left,  #0d0700, transparent)",
+        }}
+      />
 
       {/* Scrolling strip — CSS animation, compositor-only */}
       <div
@@ -379,9 +600,16 @@ function InfiniteRibbon({ items, direction = 1, speed = 38, onCardClick }) {
 function StripLabel({ label }) {
   return (
     <div className="flex items-center gap-4 px-6 md:px-20 pt-5 pb-3">
-      <span className="font-mono text-[8px] tracking-[0.45em] uppercase whitespace-nowrap"
-            style={{ color: "rgba(194,120,0,0.3)" }}>{label}</span>
-      <div className="w-16 h-px" style={{ background: "rgba(194,120,0,0.18)" }} />
+      <span
+        className="font-mono text-[8px] tracking-[0.45em] uppercase whitespace-nowrap"
+        style={{ color: "rgba(194,120,0,0.3)" }}
+      >
+        {label}
+      </span>
+      <div
+        className="w-16 h-px"
+        style={{ background: "rgba(194,120,0,0.18)" }}
+      />
     </div>
   );
 }
@@ -390,7 +618,7 @@ function StripLabel({ label }) {
 export default function Gallery() {
   const [lightbox, setLightbox] = useState(null);
 
-  const openLightbox  = useCallback((id, items = allItems) => {
+  const openLightbox = useCallback((id, items = allItems) => {
     setLightbox({ items, index: items.findIndex((i) => i.id === id) });
   }, []);
   const closeLightbox = useCallback(() => setLightbox(null), []);
@@ -401,51 +629,109 @@ export default function Gallery() {
 
       {/* ── HEADER ── */}
       <div className="relative px-6 md:px-20 pt-36 md:pt-24 pb-0">
-        <div className="absolute left-6 md:left-20 top-36 md:top-24"
-             style={{ width: 2, height: 48, background: "linear-gradient(to bottom, transparent, #c27800)" }} />
+        <div
+          className="absolute left-6 md:left-20 top-36 md:top-24"
+          style={{
+            width: 2,
+            height: 48,
+            background: "linear-gradient(to bottom, transparent, #c27800)",
+          }}
+        />
         <div className="pl-4 md:pl-5">
-          <p className="font-mono text-[8px] tracking-[0.25em] md:tracking-[0.35em] mb-3 leading-relaxed" style={{ color: "#c27800" }}>
+          <p
+            className="font-mono text-[8px] tracking-[0.25em] md:tracking-[0.35em] mb-3 leading-relaxed"
+            style={{ color: "#c27800" }}
+          >
             CONCORD XXVI · REBIRTH OF AAHANS
             <span className="hidden md:inline"> · CALCUTTA BOYS' SCHOOL</span>
           </p>
-          <h1 className="text-[clamp(36px,10vw,72px)] font-semibold leading-none tracking-[0.08em] uppercase text-white"
-              style={{ fontFamily: "'Oswald','Arial Narrow',sans-serif" }}>
+          <h1
+            className="text-[clamp(36px,10vw,72px)] font-semibold leading-none tracking-[0.08em] uppercase text-white"
+            style={{ fontFamily: "'Oswald','Arial Narrow',sans-serif" }}
+          >
             GAL<span style={{ color: "#c27800" }}>L</span>ERY
           </h1>
           <div className="flex gap-5 mt-3 md:hidden">
             {["APRIL 18–19, 2026", "EST. 1877", "ANNUAL FEST"].map((t) => (
-              <p key={t} className="font-mono text-[7px] tracking-[0.22em]" style={{ color: "rgba(194,120,0,0.5)" }}>{t}</p>
+              <p
+                key={t}
+                className="font-mono text-[7px] tracking-[0.22em]"
+                style={{ color: "rgba(194,120,0,0.5)" }}
+              >
+                {t}
+              </p>
             ))}
           </div>
         </div>
         <div className="hidden md:block absolute right-20 bottom-2 text-right">
           {["APRIL 18 – 19, 2026", "EST. 1877", "ANNUAL FEST"].map((t) => (
-            <p key={t} className="font-mono text-[9px] tracking-[0.3em] leading-loose" style={{ color: "rgba(194,120,0,0.5)" }}>{t}</p>
+            <p
+              key={t}
+              className="font-mono text-[9px] tracking-[0.3em] leading-loose"
+              style={{ color: "rgba(194,120,0,0.5)" }}
+            >
+              {t}
+            </p>
           ))}
         </div>
       </div>
 
       {/* ── DIVIDER ── */}
       <div className="flex items-center gap-3 md:gap-4 px-6 md:px-20 py-5 md:py-6">
-        <span className="text-[6px]" style={{ color: "#c27800" }}>◆</span>
-        <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, rgba(194,120,0,0.7), rgba(194,120,0,0.08))" }} />
-        <span className="font-mono text-[7px] md:text-[8px] tracking-[0.3em] md:tracking-[0.4em]" style={{ color: "rgba(194,120,0,0.35)" }}>VISUAL ARCHIVE</span>
-        <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, rgba(194,120,0,0.7), rgba(194,120,0,0.08))" }} />
-        <span className="text-[6px]" style={{ color: "#c27800" }}>◆</span>
+        <span className="text-[6px]" style={{ color: "#c27800" }}>
+          ◆
+        </span>
+        <div
+          className="flex-1 h-px"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(194,120,0,0.7), rgba(194,120,0,0.08))",
+          }}
+        />
+        <span
+          className="font-mono text-[7px] md:text-[8px] tracking-[0.3em] md:tracking-[0.4em]"
+          style={{ color: "rgba(194,120,0,0.35)" }}
+        >
+          VISUAL ARCHIVE
+        </span>
+        <div
+          className="flex-1 h-px"
+          style={{
+            background:
+              "linear-gradient(to left, rgba(194,120,0,0.7), rgba(194,120,0,0.08))",
+          }}
+        />
+        <span className="text-[6px]" style={{ color: "#c27800" }}>
+          ◆
+        </span>
       </div>
 
       {/* ── RIBBONS ── */}
       <StripLabel label="DAY ONE" />
       <div style={{ paddingBottom: 20 }}>
-        <InfiniteRibbon items={strip1} direction={1}  speed={38} onCardClick={openLightbox} />
+        <InfiniteRibbon
+          items={strip1}
+          direction={1}
+          speed={38}
+          onCardClick={openLightbox}
+        />
       </div>
       <StripLabel label="DAY TWO" />
-      <InfiniteRibbon   items={strip2} direction={-1} speed={44} onCardClick={openLightbox} />
+      <InfiniteRibbon
+        items={strip2}
+        direction={-1}
+        speed={44}
+        onCardClick={openLightbox}
+      />
 
       {/* ── LIGHTBOX ── */}
       <AnimatePresence>
         {lightbox && (
-          <Lightbox items={lightbox.items} startIndex={lightbox.index} onClose={closeLightbox} />
+          <Lightbox
+            items={lightbox.items}
+            startIndex={lightbox.index}
+            onClose={closeLightbox}
+          />
         )}
       </AnimatePresence>
     </div>
