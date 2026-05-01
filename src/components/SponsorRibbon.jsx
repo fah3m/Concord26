@@ -67,7 +67,7 @@ const SponsorRibbon = () => {
     if (!track) return;
 
     const totalWidth = track.scrollWidth / 2; // half because we doubled the array
-    const duration = 28000;
+    const duration = 90000;
 
     function loop() {
       animRef.current = track.animate(
