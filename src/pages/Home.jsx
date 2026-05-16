@@ -25,7 +25,7 @@ const fadeIn = (delay = 0) => ({
 const Home = () => {
   return (
     // h-1350 controls total scroll length for BlobBackground — keep as-is
-    <div className="h-1350 overflow-x-hidden">
+    <div className="min-h-1350 overflow-x-hidden">
       <BlobBackground />
 
       {/*
@@ -523,7 +523,7 @@ const Home = () => {
         <Contact />
       </div>
 
-      <div id="footer">
+      <div className="overflow-x-hidden">
         <Footer />
       </div>
     </div>

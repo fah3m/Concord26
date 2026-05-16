@@ -9,18 +9,55 @@ const links = [
   { name: "Contact", path: "/", scrollTo: "contact" },
 ];
 
-// Events is a separate CTA but scrolls to #events on home, same pattern
 const eventsLink = { name: "Events", path: "/", scrollTo: "events" };
 
-function scrollToId(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  // Subtract navbar height so content isn't hidden behind it.
-  // 80px covers the desktop pill (top-6 + nav height ~56px) and
-  // mobile bar (top-4 + nav height ~60px) with a little breathing room.
-  const NAVBAR_OFFSET = 80;
-  const top = el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET;
-  window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+const NAVBAR_OFFSET = 80;
+
+// Module-level RAF handle so any new scroll cancels the previous one.
+let activeScrollRaf = null;
+
+function scrollToY(targetY) {
+  // Cancel any animation already in flight.
+  if (activeScrollRaf !== null) {
+    cancelAnimationFrame(activeScrollRaf);
+    activeScrollRaf = null;
+  }
+
+  // ── iOS momentum-scroll killer ──────────────────────────────────────
+  // iOS Safari keeps inertia running after a finger swipe. Calling
+  // scrollTo with the *current* position is a no-op visually but tells
+  // the browser to stop the inertia, so it won't fight our animation.
+  window.scrollTo(0, window.scrollY);
+
+  const startY = window.scrollY;
+  const distance = targetY - startY;
+  if (Math.abs(distance) < 1) return;
+
+  // Duration scales with distance: short hops stay snappy,
+  // long jumps (gallery ↔ contact) don't drag. Capped 380–900 ms.
+  const duration = Math.min(900, Math.max(380, Math.abs(distance) * 0.45));
+  let startTime = null;
+
+  function ease(t) {
+    // Ease-in-out cubic
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function step(ts) {
+    if (startTime === null) startTime = ts;
+    const progress = Math.min((ts - startTime) / duration, 1);
+    window.scrollTo(0, startY + distance * ease(progress));
+    if (progress < 1) {
+      activeScrollRaf = requestAnimationFrame(step);
+    } else {
+      activeScrollRaf = null;
+    }
+  }
+
+  // Skip 2 frames so the momentum-stop has time to land before we begin.
+  activeScrollRaf = requestAnimationFrame(() => {
+    activeScrollRaf = requestAnimationFrame(step);
+  });
 }
 
 export default function Navbar() {
@@ -43,23 +80,38 @@ export default function Navbar() {
     if (pendingScroll.current) {
       const target = pendingScroll.current;
       pendingScroll.current = null;
-      setTimeout(() => scrollToId(target), 100);
+      setTimeout(() => {
+        const el = document.getElementById(target);
+        if (el) {
+          scrollToY(
+            Math.max(
+              0,
+              el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET,
+            ),
+          );
+        }
+      }, 100);
     }
-    // Scroll-based detection: whichever section's top is closest above
-    // the middle of the viewport wins. Works for sections of any height.
+
     const sections = ["home", "about", "gallery", "events", "contact"];
     const onScroll = () => {
-      // getBoundingClientRect gives position relative to viewport — always accurate
-      // regardless of nesting. A section is "active" once its top has passed
-      // 40% down the viewport.
       const trigger = window.innerHeight * 0.4;
       let current = "home";
       sections.forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= trigger) current = id;
+        if (el.getBoundingClientRect().top <= trigger) current = id;
       });
+
+      // Contact sits at the page bottom — its top may never cross the
+      // 40% trigger on mobile. Force it active near the end of the page.
+      if (
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 120
+      ) {
+        current = "contact";
+      }
+
       setActiveSection(current);
     };
     onScroll();
@@ -69,7 +121,6 @@ export default function Navbar() {
 
   useEffect(() => {
     requestAnimationFrame(() => {
-      // Inline so we always read the latest activeSection & location
       let idx;
       if (location.pathname === "/") {
         if (activeSection === "about") idx = 1;
@@ -102,13 +153,32 @@ export default function Navbar() {
 
   const handleNav = (link) => {
     if (!link.scrollTo) return;
-    setMenuOpen(false);
+
     if (location.pathname !== "/") {
+      setMenuOpen(false);
       pendingScroll.current = link.scrollTo;
       navigate("/");
-    } else {
-      setTimeout(() => scrollToId(link.scrollTo), 300);
+      return;
     }
+
+    // ── Key insight ─────────────────────────────────────────────────────
+    // The navbar is position:fixed, so opening/closing the mobile menu
+    // does NOT shift the document layout. Calculate the target Y *now*
+    // (while everything is stable), then close the menu and scroll
+    // immediately — no timeout needed.
+    const el = document.getElementById(link.scrollTo);
+    if (!el) {
+      setMenuOpen(false);
+      return;
+    }
+
+    const targetY = Math.max(
+      0,
+      el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET,
+    );
+
+    setMenuOpen(false);
+    scrollToY(targetY);
   };
 
   const isActive = (link, routerIsActive) => {
@@ -231,7 +301,7 @@ export default function Navbar() {
             style={{ background: "rgba(255,190,60,0.12)" }}
           />
 
-          {/* Events CTA — scrolls to #events instead of navigating */}
+          {/* Events CTA */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -397,7 +467,7 @@ export default function Navbar() {
                     );
                   })}
 
-                  {/* Mobile Events CTA — scrolls to #events */}
+                  {/* Mobile Events CTA */}
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}

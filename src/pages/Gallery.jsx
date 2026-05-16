@@ -6,112 +6,112 @@ const allItems = [
     id: 1,
     label: "WESTERN BAND",
     sub: "2026 · KALAMANDIR",
-    imgUrl: "/gallery/1.jpg",
+    imgUrl: "/gallery/1.webp",
     day: 1,
   },
   {
     id: 2,
     label: "FASHION SHOW",
     sub: "PERFORMANCES",
-    imgUrl: "/gallery/2.jpg",
+    imgUrl: "/gallery/2.webp",
     day: 1,
   },
   {
     id: 3,
     label: "WESTERN DANCE",
     sub: "DAY 3",
-    imgUrl: "/gallery/3.jpg",
+    imgUrl: "/gallery/3.webp",
     day: 1,
   },
   {
     id: 4,
     label: "DJ EVENT",
     sub: "DAY 3 KALAMANDIR",
-    imgUrl: "/gallery/4.jpg",
+    imgUrl: "/gallery/4.webp",
     day: 1,
   },
   {
     id: 5,
     label: "FOOTBALL",
     sub: "SPORTS DAY 2",
-    imgUrl: "/gallery/5.jpg",
+    imgUrl: "/gallery/5.webp",
     day: 1,
   },
   {
     id: 6,
     label: "IPL AUCTION",
     sub: "CALCUTTA BOYS' SCHOOL",
-    imgUrl: "/gallery/6.jpg",
+    imgUrl: "/gallery/6.webp",
     day: 1,
   },
   {
     id: 7,
     label: "VISUAL POETRY SLAM",
     sub: "DAY ONE",
-    imgUrl: "/gallery/7.jpg",
+    imgUrl: "/gallery/7.webp",
     day: 1,
   },
   {
     id: 8,
     label: "CROWD MOMENT",
     sub: "KALAMANDIR FINAL PERFORMANCE",
-    imgUrl: "/gallery/8.jpg",
+    imgUrl: "/gallery/8.webp",
     day: 1,
   },
   {
     id: 9,
     label: "WAVES IN TOWN",
     sub: "DAY 3 KALAMANDIR",
-    imgUrl: "/gallery/9.jpg",
+    imgUrl: "/gallery/9.webp",
     day: 2,
   },
   {
     id: 10,
-    label: "DRAMA & THEATRE",
-    sub: "MAIN AUDITORIUM",
-    imgUrl: "/gallery/10.jpg",
+    label: "ACOUSTIC EVENT",
+    sub: "PRELIMS DAY 2",
+    imgUrl: "/gallery/10.webp",
     day: 2,
   },
   {
     id: 11,
-    label: "FOOD STALLS",
-    sub: "FEST FLAVOURS",
-    imgUrl: "/gallery/11.jpg",
+    label: "WAVES IN TOWN",
+    sub: "KALAMANDIR DAY 3",
+    imgUrl: "/gallery/11.webp",
     day: 2,
   },
   {
     id: 12,
-    label: "CROWD PORTRAITS",
-    sub: "CLASS OF 2026",
-    imgUrl: "/gallery/12.jpg",
+    label: "MULTIMEDIA VIDEOGRAPHY",
+    sub: "MAIN DAY 1",
+    imgUrl: "/gallery/12.webp",
     day: 2,
   },
   {
     id: 13,
-    label: "PHOTOGRAPHY AWARD",
-    sub: "BEST CAPTURE",
-    imgUrl: "/gallery/13.jpg",
+    label: "SQUID GAME",
+    sub: "MAIN DAY 1",
+    imgUrl: "/gallery/13.webp",
     day: 2,
   },
   {
     id: 14,
-    label: "FACULTY FELICITATION",
-    sub: "GRATITUDE SESSION",
-    imgUrl: "/gallery/14.jpg",
+    label: "PRETENTIOUS MOVIE REVIEW",
+    sub: "MAIN DAY 1",
+    imgUrl: "/gallery/14.webp",
     day: 2,
   },
   {
     id: 15,
-    label: "FINAL MOMENTS",
-    sub: "GOODBYES & BONDS",
-    imgUrl: "/gallery/15.jpg",
+    label: "VISUAL POETRY SLAM",
+    sub: "MAIN DAY 2",
+    imgUrl: "/gallery/15.webp",
     day: 2,
   },
   {
     id: 16,
-    label: "REBIRTH OF AAHANS",
-    sub: "THEME REVEAL",
-    imgUrl: "/gallery/16.jpg",
+    label: "FOOTBALL",
+    sub: "CBS FIELD",
+    imgUrl: "/gallery/16.webp",
     day: 2,
   },
 ];
@@ -707,7 +707,7 @@ export default function Gallery() {
       </div>
 
       {/* ── RIBBONS ── */}
-      <StripLabel label="DAY ONE" />
+      <StripLabel label="Concord 2025" />
       <div style={{ paddingBottom: 20 }}>
         <InfiniteRibbon
           items={strip1}
@@ -716,7 +716,7 @@ export default function Gallery() {
           onCardClick={openLightbox}
         />
       </div>
-      <StripLabel label="DAY TWO" />
+      <StripLabel label="Concord 2025" />
       <InfiniteRibbon
         items={strip2}
         direction={-1}

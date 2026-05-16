@@ -23,6 +23,9 @@ export default function Footer() {
     <footer
       style={{
         borderTop: "1px solid rgba(255,190,60,0.12)",
+        // NO overflowX: hidden here — that implicitly sets overflowY: auto
+        // on the footer itself, producing a second scrollbar on Windows.
+        // The grid column fix below prevents the overflow at its source.
       }}
     >
       {/* Top rule with diamond */}
@@ -73,10 +76,14 @@ export default function Footer() {
       </div>
 
       <div
-        className="grid gap-12 py-14"
+        className="grid"
         style={{
           padding: "3.5rem clamp(1.5rem, 6vw, 8vw)",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "3rem",
+          // min(200px, 100%) prevents any column's minimum from exceeding
+          // the container width, which was the true source of the overflow.
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(200px, 100%), 1fr))",
         }}
       >
         {/* ── Brand column ── */}
@@ -335,7 +342,7 @@ export default function Footer() {
             Crafted by
           </p>
           <a
-            href="https://github.com/f3him"
+            href="https://github.com/fah3m"
             target="_blank"
             rel="noreferrer"
             className="font-main font-bold uppercase transition-colors duration-200"
