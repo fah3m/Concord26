@@ -4,6 +4,8 @@ import BlobBackground from "../components/BlobBackground";
 import SponsorRibbon from "../components/SponsorRibbon";
 import About from "./About";
 import Gallery from "./Gallery";
+import Events from "./Events";
+import Contact from "./Contact";
 
 const ease = [0.16, 1, 0.3, 1];
 
@@ -510,6 +512,14 @@ const Home = () => {
 
       <div id="gallery">
         <Gallery />
+      </div>
+
+      <div id="events">
+        <Events />
+      </div>
+
+      <div id="contact">
+        <Contact />
       </div>
     </div>
   );

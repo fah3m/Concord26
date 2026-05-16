@@ -6,14 +6,21 @@ const links = [
   { name: "Home", path: "/", scrollTo: "home" },
   { name: "About", path: "/", scrollTo: "about" },
   { name: "Gallery", path: "/", scrollTo: "gallery" },
-  { name: "Contact", path: "/contact" },
+  { name: "Contact", path: "/", scrollTo: "contact" },
 ];
+
+// Events is a separate CTA but scrolls to #events on home, same pattern
+const eventsLink = { name: "Events", path: "/", scrollTo: "events" };
 
 function scrollToId(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({ top, behavior: "smooth" });
+  // Subtract navbar height so content isn't hidden behind it.
+  // 80px covers the desktop pill (top-6 + nav height ~56px) and
+  // mobile bar (top-4 + nav height ~60px) with a little breathing room.
+  const NAVBAR_OFFSET = 80;
+  const top = el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET;
+  window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
 }
 
 export default function Navbar() {
@@ -38,35 +45,48 @@ export default function Navbar() {
       pendingScroll.current = null;
       setTimeout(() => scrollToId(target), 100);
     }
-    const sections = ["home", "about", "gallery"];
-    const observers = [];
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(id);
-        },
-        { threshold: 0.55 },
-      );
-      observer.observe(el);
-      observers.push(observer);
-    });
-    return () => observers.forEach((o) => o.disconnect());
+    // Scroll-based detection: whichever section's top is closest above
+    // the middle of the viewport wins. Works for sections of any height.
+    const sections = ["home", "about", "gallery", "events", "contact"];
+    const onScroll = () => {
+      // getBoundingClientRect gives position relative to viewport — always accurate
+      // regardless of nesting. A section is "active" once its top has passed
+      // 40% down the viewport.
+      const trigger = window.innerHeight * 0.4;
+      let current = "home";
+      sections.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= trigger) current = id;
+      });
+      setActiveSection(current);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, [location.pathname]);
-
-  const getActiveLinkIndex = () => {
-    if (location.pathname === "/") {
-      if (activeSection === "about") return 1;
-      if (activeSection === "gallery") return 2;
-      return 0;
-    }
-    return links.findIndex((l) => !l.scrollTo && l.path === location.pathname);
-  };
 
   useEffect(() => {
     requestAnimationFrame(() => {
-      const idx = getActiveLinkIndex();
+      // Inline so we always read the latest activeSection & location
+      let idx;
+      if (location.pathname === "/") {
+        if (activeSection === "about") idx = 1;
+        else if (activeSection === "gallery") idx = 2;
+        else if (activeSection === "contact") idx = 3;
+        else if (activeSection === "events") idx = -1;
+        else idx = 0;
+      } else {
+        idx = links.findIndex(
+          (l) => !l.scrollTo && l.path === location.pathname,
+        );
+      }
+
+      if (idx === -1) {
+        setPillStyle((prev) => ({ ...prev, width: 0 }));
+        return;
+      }
       const el = linkRefs.current[idx];
       const nav = navRef.current;
       if (!el || !nav) return;
@@ -99,6 +119,9 @@ export default function Navbar() {
     return routerIsActive;
   };
 
+  const eventsIsActive =
+    location.pathname === "/" && activeSection === "events";
+
   const linkClass = (active) =>
     `relative px-4 py-2 rounded-full text-sm font-main tracking-wide transition-all duration-200 z-10 ${
       active
@@ -119,7 +142,7 @@ export default function Navbar() {
           ref={navRef}
           className="relative flex items-center gap-0.5 rounded-full px-2.5 py-1.5"
           style={{
-            background: "rgba(10,8,5,0.90)", // slightly more opaque to compensate
+            background: "rgba(10,8,5,0.90)",
             border: "1px solid rgba(255,190,60,0.13)",
             boxShadow:
               "0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,190,60,0.06)",
@@ -208,7 +231,7 @@ export default function Navbar() {
             style={{ background: "rgba(255,190,60,0.12)" }}
           />
 
-          {/* Events CTA */}
+          {/* Events CTA — scrolls to #events instead of navigating */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -221,17 +244,21 @@ export default function Navbar() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
           >
-            <NavLink
-              to="/events"
+            <button
+              onClick={() => handleNav(eventsLink)}
               className="block px-5 py-2 rounded-full text-sm font-medium font-main tracking-wide transition-all duration-200"
               style={{
-                background: "rgba(255,185,55,0.92)",
+                background: eventsIsActive
+                  ? "rgba(255,185,55,1)"
+                  : "rgba(255,185,55,0.92)",
                 color: "#0c0a06",
-                boxShadow: "0 2px 12px rgba(255,185,55,0.25)",
+                boxShadow: eventsIsActive
+                  ? "0 2px 18px rgba(255,185,55,0.45)"
+                  : "0 2px 12px rgba(255,185,55,0.25)",
               }}
             >
               Events
-            </NavLink>
+            </button>
           </motion.div>
         </nav>
       </motion.div>
@@ -370,7 +397,7 @@ export default function Navbar() {
                     );
                   })}
 
-                  {/* Mobile Events */}
+                  {/* Mobile Events CTA — scrolls to #events */}
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -382,9 +409,8 @@ export default function Navbar() {
                     }}
                     className="mt-1"
                   >
-                    <NavLink
-                      to="/events"
-                      onClick={() => setMenuOpen(false)}
+                    <button
+                      onClick={() => handleNav(eventsLink)}
                       className="block w-full text-center px-4 py-2.5 rounded-xl text-sm font-medium font-main tracking-wide"
                       style={{
                         background: "rgba(255,185,55,0.9)",
@@ -393,7 +419,7 @@ export default function Navbar() {
                       }}
                     >
                       Events
-                    </NavLink>
+                    </button>
                   </motion.div>
                 </div>
               </motion.div>
