@@ -6,6 +6,7 @@ import About from "./About";
 import Gallery from "./Gallery";
 import Events from "./Events";
 import Contact from "./Contact";
+import Footer from "../rootLayout/Footer";
 
 const ease = [0.16, 1, 0.3, 1];
 
@@ -431,7 +432,7 @@ const Home = () => {
                 style={{ background: "rgba(255,190,60,0.35)" }}
               />
               <span className="font-main text-white/45 text-[0.74rem] tracking-[0.15em] uppercase font-bold">
-                Rebirth of Aahans
+                Resurge.Reclaim.Reign.
               </span>
             </motion.div>
           </div>
@@ -446,7 +447,7 @@ const Home = () => {
                 Date
               </p>
               <p className="font-main text-[0.75rem] tracking-[0.08em] uppercase text-white/60 font-bold">
-                Apr 18–19, 2026
+                July 1-3, 2026
               </p>
             </div>
             <span
@@ -520,6 +521,10 @@ const Home = () => {
 
       <div id="contact">
         <Contact />
+      </div>
+
+      <div id="footer">
+        <Footer />
       </div>
     </div>
   );
