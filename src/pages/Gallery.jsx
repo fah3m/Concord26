@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, memo } from "react";
+import { useState, useEffect, useCallback, useRef, memo, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const allItems = [
@@ -134,20 +134,14 @@ const gradients = [
   "from-[#5a2800] via-[#1e0d00] to-[#9a5000]",
 ];
 
-// ── Shared transition configs (defined once, never recreated) ─────────────
-const CARD_HOVER_TRANSITION = {
-  duration: 0.18,
-  ease: [0.25, 0.46, 0.45, 0.94],
-};
 const LIGHTBOX_TRANSITION = { duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] };
 const IMG_TRANSITION = { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] };
 
-// ── LIGHTBOX ─────────────────────────────────────────────────────────────
+// ── LIGHTBOX ──────────────────────────────────────────────────────────────
 function Lightbox({ items, startIndex, onClose }) {
   const [idx, setIdx] = useState(startIndex);
   const item = items[idx];
 
-  // Touch-swipe support
   const touchStartX = useRef(null);
   const onTouchStart = useCallback((e) => {
     touchStartX.current = e.touches[0].clientX;
@@ -221,7 +215,6 @@ function Lightbox({ items, startIndex, onClose }) {
         </svg>
       ))}
 
-      {/* Close */}
       <button
         className="absolute top-5 right-5 z-10 w-9 h-9 flex items-center justify-center rounded-full"
         style={{
@@ -240,7 +233,6 @@ function Lightbox({ items, startIndex, onClose }) {
         </svg>
       </button>
 
-      {/* Counter */}
       <div
         className="absolute top-5 left-1/2 -translate-x-1/2 font-mono text-[9px] tracking-[0.4em]"
         style={{ color: "rgba(194,120,0,0.45)" }}
@@ -249,7 +241,6 @@ function Lightbox({ items, startIndex, onClose }) {
         {String(items.length).padStart(2, "0")}
       </div>
 
-      {/* Image */}
       <motion.div
         key={idx}
         className="relative mx-16 md:mx-24"
@@ -302,7 +293,6 @@ function Lightbox({ items, startIndex, onClose }) {
         </div>
       </motion.div>
 
-      {/* Prev / Next */}
       {[
         { fn: prev, label: "←", side: "left-3 md:left-6" },
         { fn: next, label: "→", side: "right-3 md:right-6" },
@@ -332,7 +322,6 @@ function Lightbox({ items, startIndex, onClose }) {
         </button>
       ))}
 
-      {/* Thumbnail strip */}
       <div
         className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 px-4 overflow-x-auto max-w-[90vw]"
         style={{ scrollbarWidth: "none" }}
@@ -375,26 +364,26 @@ function Lightbox({ items, startIndex, onClose }) {
 }
 
 // ── GALLERY CARD ──────────────────────────────────────────────────────────
-// memo: prevents re-renders when ribbon tick doesn't change individual cards
 const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
-      className="relative flex-shrink-0 overflow-hidden cursor-pointer"
+      className="relative flex-shrink-0 overflow-hidden"
       style={{
         width: CARD_W,
         height: 240,
-        // CSS-driven transform — composited on GPU, no JS per frame
+        // CSS-driven on compositor thread
         transform: hovered ? "scale(1.04)" : "scale(1)",
         transition: "transform 0.18s cubic-bezier(0.25,0.46,0.45,0.94)",
         zIndex: hovered ? 20 : 1,
         willChange: "transform",
+        // Isolate paint/layout so off-screen cards don't affect main thread
+        contain: "layout style",
+        cursor: "pointer",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onTouchStart={() => setHovered(true)}
-      onTouchEnd={() => setHovered(false)}
       onClick={onOpen}
     >
       <div
@@ -522,43 +511,151 @@ const GalleryCard = memo(function GalleryCard({ item, index, onOpen }) {
 });
 
 // ── INFINITE RIBBON ───────────────────────────────────────────────────────
-// Pure CSS @keyframes animation — runs entirely on the compositor thread,
-// zero JS per frame, can't jank, pauses instantly via animationPlayState.
+// RAF-based scroll with drag-to-scroll + momentum fling.
+// Zero CSS @keyframes → no compositor/JS animation conflict.
 function InfiniteRibbon({ items, direction = 1, speed = 38, onCardClick }) {
-  const tripled = [...items, ...items, ...items];
-  const singleSetW = items.length * CARD_STRIDE;
-  const duration = singleSetW / speed;
-  const animName = direction > 0 ? "ribbonFwd" : "ribbonRev";
-  const [paused, setPaused] = useState(false);
+  const repeated = useMemo(() => [...items, ...items, ...items], [items]);
+  const singleSetW = useMemo(() => items.length * CARD_STRIDE, [items.length]);
+  // Base velocity: negative = moving left (forward for direction 1)
+  const baseV = direction > 0 ? -speed : speed;
 
-  // Stable per-card open handlers
-  const handlers = useRef({});
-  items.forEach((item) => {
-    if (!handlers.current[item.id]) {
-      handlers.current[item.id] = () => onCardClick(item.id);
-    }
+  const containerRef = useRef(null);
+  const stripRef = useRef(null);
+  const rafRef = useRef(null);
+
+  // All mutable state lives in a single ref — no re-renders during animation
+  const s = useRef({
+    offset: 0,
+    velocity: 0,
+    isDragging: false,
+    dragStartX: 0,
+    dragStartOffset: 0,
+    lastPointerX: 0,
+    lastPointerTime: 0,
+    pointerVelocity: 0,
+    isPaused: false,
+    hasDragged: false,
   });
+
+  // Wrap offset into (-singleSetW, 0] for seamless looping with 3 copies
+  const wrap = useCallback(
+    (offset) => {
+      let o = offset % singleSetW;
+      if (o > 0) o -= singleSetW;
+      return o;
+    },
+    [singleSetW],
+  );
+
+  // Stable per-card open handlers — check hasDragged to suppress click after drag
+  const handlerMap = useMemo(() => {
+    const map = {};
+    items.forEach((item) => {
+      map[item.id] = () => {
+        if (!s.current.hasDragged) onCardClick(item.id);
+      };
+    });
+    return map;
+  }, [items, onCardClick]);
+
+  // Main animation loop — runs on RAF, only touches transform
+  useEffect(() => {
+    const st = s.current;
+    st.velocity = baseV;
+    st.offset = 0;
+    const DECAY = 5; // how fast velocity recovers toward baseV after a fling
+    const FRICTION = 0.88; // per-second friction when hovered (fling decays to 0)
+    let lastTime = 0;
+
+    const tick = (timestamp) => {
+      const dt = lastTime ? Math.min((timestamp - lastTime) / 1000, 0.05) : 0;
+      lastTime = timestamp;
+
+      if (!st.isDragging) {
+        if (!st.isPaused) {
+          // Decay toward auto-scroll speed (handles post-fling recovery too)
+          st.velocity += (baseV - st.velocity) * Math.min(DECAY * dt, 1);
+        } else {
+          // Hover: let fling momentum decay to a stop (don't auto-scroll)
+          st.velocity *= Math.pow(FRICTION, dt * 60);
+          if (Math.abs(st.velocity) < 0.3) st.velocity = 0;
+        }
+        st.offset = wrap(st.offset + st.velocity * dt);
+      }
+      // During drag: position is set directly in onPointerMove — nothing to do here
+
+      if (stripRef.current) {
+        stripRef.current.style.transform = `translate3d(${st.offset}px,0,0)`;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [baseV, wrap]);
+
+  // ── Pointer handlers ──────────────────────────────────────────────────
+  const onPointerDown = useCallback((e) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const st = s.current;
+    st.isDragging = true;
+    st.hasDragged = false;
+    st.dragStartX = e.clientX;
+    st.dragStartOffset = st.offset;
+    st.lastPointerX = e.clientX;
+    st.lastPointerTime = performance.now();
+    st.pointerVelocity = 0;
+    containerRef.current?.setPointerCapture(e.pointerId);
+    if (containerRef.current) containerRef.current.style.cursor = "grabbing";
+  }, []);
+
+  const onPointerMove = useCallback(
+    (e) => {
+      const st = s.current;
+      if (!st.isDragging) return;
+      const now = performance.now();
+      const dt = (now - st.lastPointerTime) / 1000;
+      const dxFromStart = e.clientX - st.dragStartX;
+
+      if (Math.abs(dxFromStart) > 5) st.hasDragged = true;
+
+      // Track instantaneous velocity for fling (px/s, negative = moving left)
+      if (dt > 0.004) {
+        st.pointerVelocity = (e.clientX - st.lastPointerX) / dt;
+      }
+      st.lastPointerX = e.clientX;
+      st.lastPointerTime = now;
+      st.offset = wrap(st.dragStartOffset + dxFromStart);
+    },
+    [wrap],
+  );
+
+  const onPointerUp = useCallback(() => {
+    const st = s.current;
+    if (!st.isDragging) return;
+    st.isDragging = false;
+    // Hand off pointer velocity to the animation as a fling
+    const maxV = speed * 10;
+    st.velocity = Math.max(-maxV, Math.min(maxV, st.pointerVelocity));
+    if (containerRef.current) containerRef.current.style.cursor = "grab";
+  }, [speed]);
 
   return (
     <div
-      className="relative overflow-hidden w-full"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onTouchStart={() => setPaused(true)}
-      onTouchEnd={() => setPaused(false)}
+      ref={containerRef}
+      className="relative overflow-hidden w-full select-none"
+      style={{ cursor: "grab", touchAction: "pan-y" }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onMouseEnter={() => {
+        s.current.isPaused = true;
+      }}
+      onMouseLeave={() => {
+        s.current.isPaused = false;
+      }}
     >
-      {/* Keyframes injected once per ribbon instance */}
-      <style>{`
-        @keyframes ribbonFwd {
-          from { transform: translate3d(0,0,0); }
-          to   { transform: translate3d(-${singleSetW}px,0,0); }
-        }
-        @keyframes ribbonRev {
-          from { transform: translate3d(-${singleSetW}px,0,0); }
-          to   { transform: translate3d(0,0,0); }
-        }
-      `}</style>
-
       {/* Edge fades */}
       <div
         className="absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none"
@@ -568,27 +665,21 @@ function InfiniteRibbon({ items, direction = 1, speed = 38, onCardClick }) {
       />
       <div
         className="absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none"
-        style={{
-          background: "linear-gradient(to left,  #0d0700, transparent)",
-        }}
+        style={{ background: "linear-gradient(to left, #0d0700, transparent)" }}
       />
 
-      {/* Scrolling strip — CSS animation, compositor-only */}
+      {/* Scrolling strip — transform set by RAF, compositor-friendly */}
       <div
+        ref={stripRef}
         className="flex w-max"
-        style={{
-          gap: CARD_GAP,
-          animation: `${animName} ${duration}s linear infinite`,
-          animationPlayState: paused ? "paused" : "running",
-          willChange: "transform",
-        }}
+        style={{ gap: CARD_GAP, willChange: "transform" }}
       >
-        {tripled.map((item, i) => (
+        {repeated.map((item, i) => (
           <GalleryCard
             key={`${item.id}-${i}`}
             item={item}
             index={i % items.length}
-            onOpen={handlers.current[item.id] ?? (() => onCardClick(item.id))}
+            onOpen={handlerMap[item.id]}
           />
         ))}
       </div>
