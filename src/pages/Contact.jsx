@@ -40,13 +40,11 @@ const DiamondOrnament = () => (
 const INCHARGES = [
   {
     name: "Arnab Dash",
-    role: "USO President",
-    phone: "+91 98300 00001",
+    phone: "+91 90733 31609",
   },
   {
-    name: "Ahaan Moholanobis",
-    role: "Head of Tech",
-    phone: "+91 98300 00002",
+    name: "Rounak Das",
+    phone: "+91 62914 43715",
   },
 ];
 
