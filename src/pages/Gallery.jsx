@@ -733,7 +733,7 @@ export default function Gallery() {
             className="font-mono text-[8px] tracking-[0.25em] md:tracking-[0.35em] mb-3 leading-relaxed"
             style={{ color: "#c27800" }}
           >
-            CONCORD XXVI · Resurge.Reclaim.Reign.
+            CONCORD XXVI · RESURGE RECLAIM REIGN
             <span className="hidden md:inline"> · CALCUTTA BOYS' SCHOOL</span>
           </p>
           <h1
