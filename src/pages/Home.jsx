@@ -23,18 +23,13 @@ const fadeIn = (delay = 0) => ({
   transition: { duration: 0.9, delay, ease },
 });
 
+const canterbury = { fontFamily: "'Canterbury', serif" };
+
 const Home = () => {
   return (
-    // h-1350 controls total scroll length for BlobBackground — keep as-is
     <div className="min-h-1350 overflow-x-hidden">
       <BlobBackground />
 
-      {/*
-        [FIX] h-svh = 100svh = smallest viewport height (browser chrome always
-        visible). This is the safe ceiling on mobile — content will never be
-        taller than this, so nothing overflows. Desktop keeps h-screen because
-        svh == dvh == lvh on desktop anyway.
-      */}
       <div
         id="home"
         className="h-svh w-screen p-0 m-0 relative overflow-hidden"
@@ -107,9 +102,10 @@ const Home = () => {
             Annual Fest
           </p>
           <h2
-            className="font-main text-white/80 leading-tight tracking-[0.12em] uppercase font-bold"
+            className="font-main text-white/80 leading-tight tracking-[0.12em]  font-bold"
             style={{
               fontSize: "clamp(0.95rem, 1.3vw, 1.55rem)",
+              ...canterbury,
               borderBottom: "1px solid rgba(255,190,60,0.2)",
               paddingBottom: "6px",
             }}
@@ -131,20 +127,20 @@ const Home = () => {
             className="flex items-center gap-3 mb-6"
             {...fadeUp(0.05, 14)}
           >
-            <span className="font-main text-[0.65rem] tracking-[0.45em] uppercase text-amber-400/60 font-bold">
+            <span className="font-main text-[0.65rem] tracking-[0.45em] text-amber-400/60 font-bold">
               Est. 1877
             </span>
             <span
               className="w-5 h-px flex-shrink-0"
               style={{ background: "rgba(255,190,60,0.3)" }}
             />
-            <span className="font-main text-[0.65rem] tracking-[0.3em] uppercase text-white/30 font-bold">
+            <span className="font-main text-[0.65rem] tracking-[0.3em] text-white/30 font-bold">
               Calcutta Boys' School
             </span>
           </motion.div>
 
           <motion.h1
-            className="block font-main font-black uppercase"
+            className="block font-main font-black"
             initial={{ opacity: 0, y: 32, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.85, delay: 0.18, ease }}
@@ -152,6 +148,7 @@ const Home = () => {
               fontSize: "clamp(4.8rem, 11.5vw, 10.5rem)",
               lineHeight: 0.88,
               letterSpacing: "0.04em",
+              ...canterbury,
               WebkitTextFillColor: "transparent",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
@@ -161,7 +158,7 @@ const Home = () => {
                 "drop-shadow(0 0 32px rgba(255,120,0,0.6)) drop-shadow(0 0 10px rgba(255,160,30,0.45))",
             }}
           >
-            CONCORD
+            Concord
           </motion.h1>
 
           <motion.div
@@ -175,7 +172,10 @@ const Home = () => {
               className="w-8 h-px flex-shrink-0"
               style={{ background: "rgba(255,190,60,0.35)" }}
             />
-            <span className="font-main text-white/50 text-[0.88rem] tracking-[0.18em] uppercase font-bold">
+            <span
+              className="font-main text-white/50 text-[0.88rem] tracking-[0.18em] font-bold"
+              style={canterbury}
+            >
               Resurge.Reclaim.Reign.
             </span>
           </motion.div>
@@ -239,7 +239,7 @@ const Home = () => {
               <p className="font-main text-[0.58rem] tracking-[0.45em] uppercase text-amber-400/45 mb-2 font-bold">
                 Venue
               </p>
-              <p className="font-main text-[0.92rem] tracking-[0.15em] uppercase text-white/65 font-bold">
+              <p className="font-main text-[0.92rem] tracking-[0.15em]  text-white/65 font-bold">
                 Calcutta Boys' School
               </p>
             </div>
@@ -298,16 +298,6 @@ const Home = () => {
         </motion.div>
 
         {/* ── MOBILE + TABLET (< lg) ── */}
-        {/*
-          [FIX] Changed from absolute inset-0 to absolute inset-x-0 with
-          explicit top/bottom bounds so it sits within the SVH container.
-          flex + justify-between distributes content evenly across the
-          available height — no item overflows regardless of navbar size,
-          because the parent is already capped at 100svh and overflow:hidden.
-
-          Spacing reduced across the board (py, gaps, phoenix height) so
-          all 6 flex children fit comfortably on even small phones (~667px).
-        */}
         <div className="lg:hidden absolute inset-x-0 top-0 bottom-0 z-10 flex flex-col justify-between py-[2svh] px-5">
           {/* Top bar */}
           <motion.div
@@ -322,7 +312,7 @@ const Home = () => {
             </span>
           </motion.div>
 
-          {/* Phoenix — height capped with svh so it never pushes content */}
+          {/* Phoenix */}
           <motion.div
             className="flex items-center justify-center"
             initial={{ opacity: 0, scale: 0.94 }}
@@ -395,13 +385,13 @@ const Home = () => {
                 className="w-4 h-px flex-shrink-0"
                 style={{ background: "rgba(255,190,60,0.3)" }}
               />
-              <span className="font-main text-[0.55rem] tracking-[0.25em] uppercase text-white/28 font-bold">
+              <span className="font-main text-[0.55rem] tracking-[0.25em]  text-white/28 font-bold">
                 Calcutta Boys' School
               </span>
             </motion.div>
 
             <motion.h1
-              className="font-main font-black uppercase"
+              className="font-main font-black "
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.85, delay: 0.3, ease }}
@@ -409,6 +399,7 @@ const Home = () => {
                 fontSize: "clamp(3rem, 17vw, 5rem)",
                 lineHeight: 0.88,
                 letterSpacing: "0.04em",
+                ...canterbury,
                 WebkitTextFillColor: "transparent",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
@@ -418,7 +409,7 @@ const Home = () => {
                   "drop-shadow(0 0 20px rgba(255,120,0,0.5)) drop-shadow(0 0 6px rgba(255,160,30,0.35))",
               }}
             >
-              CONCORD
+              Concord
             </motion.h1>
 
             <motion.div
@@ -432,7 +423,10 @@ const Home = () => {
                 className="w-4 h-px flex-shrink-0"
                 style={{ background: "rgba(255,190,60,0.35)" }}
               />
-              <span className="font-main text-white/45 text-[0.74rem] tracking-[0.15em] uppercase font-bold">
+              <span
+                className="font-main text-white/45 text-[0.74rem] tracking-[0.15em]  font-bold"
+                style={canterbury}
+              >
                 Resurge.Reclaim.Reign.
               </span>
             </motion.div>

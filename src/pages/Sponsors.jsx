@@ -62,7 +62,7 @@ const SponsorCard = ({ name, logo, delay = 0 }) => (
     ))}
 
     {/* Logo / monogram */}
-    <div className="h-10 flex items-center justify-center" style={{ minWidth: "60px" }}>
+  <div className="h-30 flex items-center justify-center" style={{ minWidth: "140px" }}>
       {logo ? (
         <img src={logo} alt={name} style={{ height: "100%", width: "auto", objectFit: "contain", filter: "opacity(0.85)" }} />
       ) : (
