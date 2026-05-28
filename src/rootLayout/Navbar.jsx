@@ -3,43 +3,34 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const links = [
-  { name: "Home", path: "/", scrollTo: "home" },
-  { name: "About", path: "/", scrollTo: "about" },
-  { name: "Gallery", path: "/", scrollTo: "gallery" },
-  { name: "Contact", path: "/", scrollTo: "contact" },
+  { name: "Home",     path: "/", scrollTo: "home" },
+  { name: "About",    path: "/", scrollTo: "about" },
+  { name: "Gallery",  path: "/", scrollTo: "gallery" },
+  { name: "Sponsors", path: "/", scrollTo: "sponsors" },
+  { name: "Contact",  path: "/", scrollTo: "contact" },
 ];
 
 const eventsLink = { name: "Events", path: "/", scrollTo: "events" };
 
 const NAVBAR_OFFSET = 80;
 
-// Module-level RAF handle so any new scroll cancels the previous one.
 let activeScrollRaf = null;
 
 function scrollToY(targetY) {
-  // Cancel any animation already in flight.
   if (activeScrollRaf !== null) {
     cancelAnimationFrame(activeScrollRaf);
     activeScrollRaf = null;
   }
-
-  // ── iOS momentum-scroll killer ──────────────────────────────────────
-  // iOS Safari keeps inertia running after a finger swipe. Calling
-  // scrollTo with the *current* position is a no-op visually but tells
-  // the browser to stop the inertia, so it won't fight our animation.
   window.scrollTo(0, window.scrollY);
 
   const startY = window.scrollY;
   const distance = targetY - startY;
   if (Math.abs(distance) < 1) return;
 
-  // Duration scales with distance: short hops stay snappy,
-  // long jumps (gallery ↔ contact) don't drag. Capped 380–900 ms.
   const duration = Math.min(900, Math.max(380, Math.abs(distance) * 0.45));
   let startTime = null;
 
   function ease(t) {
-    // Ease-in-out cubic
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
@@ -54,7 +45,6 @@ function scrollToY(targetY) {
     }
   }
 
-  // Skip 2 frames so the momentum-stop has time to land before we begin.
   activeScrollRaf = requestAnimationFrame(() => {
     activeScrollRaf = requestAnimationFrame(step);
   });
@@ -83,17 +73,12 @@ export default function Navbar() {
       setTimeout(() => {
         const el = document.getElementById(target);
         if (el) {
-          scrollToY(
-            Math.max(
-              0,
-              el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET,
-            ),
-          );
+          scrollToY(Math.max(0, el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET));
         }
       }, 100);
     }
 
-    const sections = ["home", "about", "gallery", "events", "contact"];
+    const sections = ["home", "about", "gallery", "events", "sponsors", "contact"];
     const onScroll = () => {
       const trigger = window.innerHeight * 0.4;
       let current = "home";
@@ -103,12 +88,7 @@ export default function Navbar() {
         if (el.getBoundingClientRect().top <= trigger) current = id;
       });
 
-      // Contact sits at the page bottom — its top may never cross the
-      // 40% trigger on mobile. Force it active near the end of the page.
-      if (
-        window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 120
-      ) {
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 120) {
         current = "contact";
       }
 
@@ -123,15 +103,10 @@ export default function Navbar() {
     requestAnimationFrame(() => {
       let idx;
       if (location.pathname === "/") {
-        if (activeSection === "about") idx = 1;
-        else if (activeSection === "gallery") idx = 2;
-        else if (activeSection === "contact") idx = 3;
-        else if (activeSection === "events") idx = -1;
-        else idx = 0;
+        const sectionToIdx = { home: 0, about: 1, gallery: 2, sponsors: 3, contact: 4 };
+        idx = activeSection === "events" ? -1 : (sectionToIdx[activeSection] ?? 0);
       } else {
-        idx = links.findIndex(
-          (l) => !l.scrollTo && l.path === location.pathname,
-        );
+        idx = links.findIndex((l) => !l.scrollTo && l.path === location.pathname);
       }
 
       if (idx === -1) {
@@ -161,22 +136,10 @@ export default function Navbar() {
       return;
     }
 
-    // ── Key insight ─────────────────────────────────────────────────────
-    // The navbar is position:fixed, so opening/closing the mobile menu
-    // does NOT shift the document layout. Calculate the target Y *now*
-    // (while everything is stable), then close the menu and scroll
-    // immediately — no timeout needed.
     const el = document.getElementById(link.scrollTo);
-    if (!el) {
-      setMenuOpen(false);
-      return;
-    }
+    if (!el) { setMenuOpen(false); return; }
 
-    const targetY = Math.max(
-      0,
-      el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET,
-    );
-
+    const targetY = Math.max(0, el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET);
     setMenuOpen(false);
     scrollToY(targetY);
   };
@@ -189,14 +152,11 @@ export default function Navbar() {
     return routerIsActive;
   };
 
-  const eventsIsActive =
-    location.pathname === "/" && activeSection === "events";
+  const eventsIsActive = location.pathname === "/" && activeSection === "events";
 
   const linkClass = (active) =>
     `relative px-4 py-2 rounded-full text-sm font-main tracking-wide transition-all duration-200 z-10 ${
-      active
-        ? "text-amber-400 font-medium"
-        : "text-white/35 hover:text-white/70 font-normal"
+      active ? "text-amber-400 font-medium" : "text-white/35 hover:text-white/70 font-normal"
     }`;
 
   return (
@@ -214,8 +174,7 @@ export default function Navbar() {
           style={{
             background: "rgba(10,8,5,0.90)",
             border: "1px solid rgba(255,190,60,0.13)",
-            boxShadow:
-              "0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,190,60,0.06)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,190,60,0.06)",
           }}
         >
           {/* Sliding amber pill */}
@@ -239,16 +198,14 @@ export default function Navbar() {
             whileTap={{ scale: 0.96 }}
           >
             <motion.img
-              src="logo.svg"
-              alt="logo"
+              src="logo.svg" alt="logo"
               className="absolute inset-0 w-full h-full rounded-full object-cover"
               animate={{ y: logoHovered ? "100%" : "0%" }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               draggable="false"
             />
             <motion.img
-              src="26.png"
-              alt="logo hover"
+              src="26.png" alt="logo hover"
               className="absolute inset-0 w-full h-full rounded-full object-cover"
               animate={{ y: logoHovered ? "0%" : "-100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
@@ -262,21 +219,13 @@ export default function Navbar() {
               key={link.name}
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: i * 0.06 + 0.15,
-                type: "spring",
-                stiffness: 260,
-                damping: 22,
-              }}
+              transition={{ delay: i * 0.06 + 0.15, type: "spring", stiffness: 260, damping: 22 }}
             >
               {link.scrollTo ? (
                 <button
                   ref={(el) => (linkRefs.current[i] = el)}
                   onClick={() => handleNav(link)}
-                  className={linkClass(
-                    location.pathname === "/" &&
-                      activeSection === link.scrollTo,
-                  )}
+                  className={linkClass(location.pathname === "/" && activeSection === link.scrollTo)}
                 >
                   {link.name}
                 </button>
@@ -285,9 +234,7 @@ export default function Navbar() {
                   ref={(el) => (linkRefs.current[i] = el)}
                   to={link.path}
                   end={link.path === "/"}
-                  className={({ isActive: ra }) =>
-                    linkClass(isActive(link, ra))
-                  }
+                  className={({ isActive: ra }) => linkClass(isActive(link, ra))}
                 >
                   {link.name}
                 </NavLink>
@@ -296,21 +243,13 @@ export default function Navbar() {
           ))}
 
           {/* Divider */}
-          <span
-            className="w-px h-4 mx-1 shrink-0"
-            style={{ background: "rgba(255,190,60,0.12)" }}
-          />
+          <span className="w-px h-4 mx-1 shrink-0" style={{ background: "rgba(255,190,60,0.12)" }} />
 
           {/* Events CTA */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              delay: 0.45,
-              type: "spring",
-              stiffness: 220,
-              damping: 18,
-            }}
+            transition={{ delay: 0.45, type: "spring", stiffness: 220, damping: 18 }}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
           >
@@ -318,13 +257,9 @@ export default function Navbar() {
               onClick={() => handleNav(eventsLink)}
               className="block px-5 py-2 rounded-full text-sm font-medium font-main tracking-wide transition-all duration-200"
               style={{
-                background: eventsIsActive
-                  ? "rgba(255,185,55,1)"
-                  : "rgba(255,185,55,0.92)",
+                background: eventsIsActive ? "rgba(255,185,55,1)" : "rgba(255,185,55,0.92)",
                 color: "#0c0a06",
-                boxShadow: eventsIsActive
-                  ? "0 2px 18px rgba(255,185,55,0.45)"
-                  : "0 2px 12px rgba(255,185,55,0.25)",
+                boxShadow: eventsIsActive ? "0 2px 18px rgba(255,185,55,0.45)" : "0 2px 12px rgba(255,185,55,0.25)",
               }}
             >
               Events
@@ -347,18 +282,12 @@ export default function Navbar() {
             border: "1px solid rgba(255,190,60,0.12)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
-            boxShadow:
-              "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,190,60,0.05)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,190,60,0.05)",
           }}
         >
-          {/* Top bar */}
           <div className="flex items-center justify-between">
             <div className="relative w-9 h-9 shrink-0 overflow-hidden rounded-full">
-              <img
-                src="logo.svg"
-                alt="logo"
-                className="w-full h-full object-cover"
-              />
+              <img src="logo.svg" alt="logo" className="w-full h-full object-cover" />
             </div>
 
             {/* Hamburger */}
@@ -368,10 +297,8 @@ export default function Navbar() {
               whileTap={{ scale: 0.9 }}
             >
               {[
-                menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 },
-                menuOpen
-                  ? { opacity: 0, scaleX: 0 }
-                  : { opacity: 1, scaleX: 1 },
+                menuOpen ? { rotate: 45,  y: 6  } : { rotate: 0, y: 0 },
+                menuOpen ? { opacity: 0,  scaleX: 0 } : { opacity: 1, scaleX: 1 },
                 menuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 },
               ].map((anim, i) => (
                 <motion.span
@@ -400,38 +327,22 @@ export default function Navbar() {
                 transition={{ type: "spring", stiffness: 280, damping: 28 }}
                 className="overflow-hidden"
               >
-                <div
-                  className="flex flex-col gap-0.5 pt-3 mt-3"
-                  style={{ borderTop: "1px solid rgba(255,190,60,0.08)" }}
-                >
+                <div className="flex flex-col gap-0.5 pt-3 mt-3" style={{ borderTop: "1px solid rgba(255,190,60,0.08)" }}>
                   {links.map((link, i) => {
                     const active = link.scrollTo
-                      ? location.pathname === "/" &&
-                        activeSection === link.scrollTo
+                      ? location.pathname === "/" && activeSection === link.scrollTo
                       : location.pathname === link.path;
 
                     const mobClass = `w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-main tracking-wide transition-all duration-150 flex items-center justify-between`;
-
-                    const activeStyle = {
-                      color: "rgba(255,185,55,0.95)",
-                      background: "rgba(255,185,55,0.08)",
-                      border: "1px solid rgba(255,185,55,0.16)",
-                    };
-                    const inactiveStyle = {
-                      color: "rgba(255,255,255,0.35)",
-                    };
+                    const activeStyle = { color: "rgba(255,185,55,0.95)", background: "rgba(255,185,55,0.08)", border: "1px solid rgba(255,185,55,0.16)" };
+                    const inactiveStyle = { color: "rgba(255,255,255,0.35)" };
 
                     return (
                       <motion.div
                         key={link.name}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          delay: i * 0.05,
-                          type: "spring",
-                          stiffness: 280,
-                          damping: 24,
-                        }}
+                        transition={{ delay: i * 0.05, type: "spring", stiffness: 280, damping: 24 }}
                       >
                         {link.scrollTo ? (
                           <button
@@ -440,12 +351,7 @@ export default function Navbar() {
                             style={active ? activeStyle : inactiveStyle}
                           >
                             <span>{link.name}</span>
-                            <motion.span
-                              style={{ fontSize: "10px", opacity: 0.45 }}
-                              animate={{ x: active ? 2 : 0 }}
-                            >
-                              →
-                            </motion.span>
+                            <motion.span style={{ fontSize: "10px", opacity: 0.45 }} animate={{ x: active ? 2 : 0 }}>→</motion.span>
                           </button>
                         ) : (
                           <NavLink
@@ -453,14 +359,10 @@ export default function Navbar() {
                             end={link.path === "/"}
                             onClick={() => setMenuOpen(false)}
                             className={mobClass}
-                            style={({ isActive: ra }) =>
-                              isActive(link, ra) ? activeStyle : inactiveStyle
-                            }
+                            style={({ isActive: ra }) => isActive(link, ra) ? activeStyle : inactiveStyle}
                           >
                             <span>{link.name}</span>
-                            <span style={{ fontSize: "10px", opacity: 0.45 }}>
-                              →
-                            </span>
+                            <span style={{ fontSize: "10px", opacity: 0.45 }}>→</span>
                           </NavLink>
                         )}
                       </motion.div>
@@ -471,22 +373,13 @@ export default function Navbar() {
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      delay: links.length * 0.05,
-                      type: "spring",
-                      stiffness: 280,
-                      damping: 24,
-                    }}
+                    transition={{ delay: links.length * 0.05, type: "spring", stiffness: 280, damping: 24 }}
                     className="mt-1"
                   >
                     <button
                       onClick={() => handleNav(eventsLink)}
                       className="block w-full text-center px-4 py-2.5 rounded-xl text-sm font-medium font-main tracking-wide"
-                      style={{
-                        background: "rgba(255,185,55,0.9)",
-                        color: "#0c0a06",
-                        boxShadow: "0 2px 10px rgba(255,185,55,0.2)",
-                      }}
+                      style={{ background: "rgba(255,185,55,0.9)", color: "#0c0a06", boxShadow: "0 2px 10px rgba(255,185,55,0.2)" }}
                     >
                       Events
                     </button>

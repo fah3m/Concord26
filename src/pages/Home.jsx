@@ -7,6 +7,7 @@ import Gallery from "./Gallery";
 import Events from "./Events";
 import Contact from "./Contact";
 import Footer from "../rootLayout/Footer";
+import Sponsors from "./Sponsors";
 
 const ease = [0.16, 1, 0.3, 1];
 
@@ -517,6 +518,10 @@ const Home = () => {
 
       <div id="events">
         <Events />
+      </div>
+
+      <div id="sponsors">
+        <Sponsors />
       </div>
 
       <div id="contact">
