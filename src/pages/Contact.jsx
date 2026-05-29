@@ -43,7 +43,7 @@ const INCHARGES = [
     phone: "+91 90733 31609",
   },
   {
-    name: "Rounak Das",
+    name: "Rounok Das",
     phone: "+91 62914 43715",
   },
 ];
