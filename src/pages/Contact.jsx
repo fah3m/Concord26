@@ -130,7 +130,7 @@ export default function Contact() {
                 Email
               </p>
               <a
-                href="mailto:cbs.main@calcuttaboysschool.edu.in"
+                href="mailto:cbsconcord2026@gmail.com"
                 className="font-main font-bold tracking-wide transition-colors duration-200"
                 style={{
                   fontSize: "clamp(0.75rem, 1.8vw, 0.95rem)",
@@ -145,7 +145,7 @@ export default function Contact() {
                   (e.target.style.color = "rgba(255,255,255,0.65)")
                 }
               >
-                cbs.main@calcuttaboysschool.edu.in
+                cbsconcord2026@gmail.com
               </a>
 
               {/* thin rule */}

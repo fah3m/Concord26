@@ -259,7 +259,7 @@ export default function Footer() {
                 Email
               </p>
               <a
-                href="mailto:cbs.main@calcuttaboysschool.edu.in"
+                href="mailto:cbsconcord2026@gmail.com"
                 className="font-main font-bold transition-colors duration-200"
                 style={{
                   fontSize: "0.72rem",
@@ -275,7 +275,7 @@ export default function Footer() {
                   (e.target.style.color = "rgba(255,255,255,0.4)")
                 }
               >
-                cbs.main@calcuttaboysschool.edu.in
+                cbsconcord2026@gmail.com
               </a>
             </div>
             <div>
