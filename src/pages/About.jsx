@@ -9,7 +9,7 @@ const fullText = [
 
 const stats = [
   { value: "1877", label: "Founded" },
-  { value: "147+", label: "Years of Legacy" },
+  { value: "149+", label: "Years of Legacy" },
   { value: "4", label: "Campuses" },
 ];
 
