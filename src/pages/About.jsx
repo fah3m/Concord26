@@ -269,7 +269,7 @@ const About = () => {
               color: "rgba(255,235,195,0.8)",
             }}
           >
-            <CBS>Calcutta Boys'School</CBS>  is a proud Christian Minority
+            <CBS>Calcutta Boys' School</CBS>  is a proud Christian Minority
             institution, founded in{" "}
             <span
               style={{
