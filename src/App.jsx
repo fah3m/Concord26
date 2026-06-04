@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import RootLayout from "./rootLayout/RootLayout.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Sponsors from "./pages/Sponsors.jsx";
+import Articles from "./pages/Articles.jsx";
 
 function App() {
   const router = createBrowserRouter(

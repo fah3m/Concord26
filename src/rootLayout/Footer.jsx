@@ -7,8 +7,12 @@ const QUICK_LINKS = [
   { label: "About", scrollTo: "about" },
   { label: "Gallery", scrollTo: "gallery" },
   { label: "Events", scrollTo: "events" },
+  { label: "Sponsors", scrollTo: "sponsors" },
   { label: "Contact", scrollTo: "contact" },
 ];
+
+const cbs = { fontFamily: "'Canterbury', serif" };
+const CBS = ({ children }) => <span style={cbs}>{children}</span>;
 
 function scrollToId(id) {
   const el = document.getElementById(id);
@@ -94,7 +98,7 @@ export default function Footer() {
           transition={{ duration: 0.7, ease }}
         >
           <p
-            className="font-main font-black uppercase"
+            className="font-main font-black"
             style={{
               fontSize: "clamp(1.8rem, 4vw, 2.6rem)",
               lineHeight: 0.9,
@@ -106,7 +110,7 @@ export default function Footer() {
                 "linear-gradient(115deg, rgba(255,140,10,1) 0%, rgba(255,195,60,1) 30%, rgba(255,255,255,0.9) 70%)",
             }}
           >
-            CONCORD
+            <CBS>Concord</CBS>
           </p>
           <p
             className="font-main font-bold uppercase mt-1"

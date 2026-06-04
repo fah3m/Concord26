@@ -1,10 +1,30 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
+const cbs = { fontFamily: "'Canterbury', serif" };
+const CBS = ({ children }) => <span style={cbs}>{children}</span>;
+
 const fullText = [
-  `Calcutta Boys' School is a proud Christian Minority institution, founded in 1877 by Bishop James M. Thoburn under the vision of the Methodist Episcopal Church. Operated under the authority of the Calcutta Boys' School Educational Society, it functions as a registered, non-profit charitable organization affiliated with the Bengal Regional Conference of the Methodist Church in India.`,
-  `What began humbly — with just six students on the veranda of a parsonage — has evolved over nearly a century and a half into one of Kolkata's most respected educational institutions. In response to a growing vision and the need to serve more communities, CBS has expanded its footprint with additional campuses in Sonarpur, Beleghata, and Asansol.`,
-  `From humble beginnings to a legacy of leadership — Calcutta Boys' School continues to inspire, uplift, and empower generations.`,
+  <>
+    <CBS>Calcutta Boys' School</CBS> is a proud Christian Minority institution,
+    founded in 1877 by Bishop James M. Thoburn under the vision of the Methodist
+    Episcopal Church. Operated under the authority of the{" "}
+    <CBS>Calcutta Boys' School</CBS> Educational Society, it functions as a
+    registered, non-profit charitable organization affiliated with the Bengal
+    Regional Conference of the Methodist Church in India.
+  </>,
+  <>
+    What began humbly — with just six students on the veranda of a parsonage —
+    has evolved over nearly a century and a half into one of Kolkata's most
+    respected educational institutions. In response to a growing vision and the
+    need to serve more communities, CBS has expanded its footprint with
+    additional campuses in Sonarpur, Beleghata, and Asansol.
+  </>,
+  <>
+    From humble beginnings to a legacy of leadership —{" "}
+    <CBS>Calcutta Boys' School</CBS>  continues to inspire, uplift, and empower
+    generations.
+  </>,
 ];
 
 const stats = [
@@ -17,14 +37,13 @@ const About = () => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-  // Add this effect inside the About component, after your existing useState/useRef
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
-    // Cleanup in case component unmounts while modal is open
     return () => {
       document.body.style.overflow = "";
     };
@@ -97,12 +116,11 @@ const About = () => {
                 className="font-abahaya text-justify leading-relaxed"
                 style={{
                   fontSize: "clamp(1.45rem, 2.2vw, 2.1rem)",
-                  // Warm-tinted white — blends with the amber fire bg
                   color: "rgba(255,235,195,0.82)",
                 }}
               >
-                Calcutta Boys' School is a proud Christian Minority institution,
-                founded in{" "}
+                <CBS>Calcutta Boys' School</CBS> is a proud Christian Minority
+                institution, founded in{" "}
                 <span
                   style={{
                     WebkitTextFillColor: "transparent",
@@ -134,9 +152,9 @@ const About = () => {
                   maxWidth: "42vw",
                 }}
               >
-                Operated under the Calcutta Boys' School Educational Society,
-                with campuses in Sonarpur, Beleghata, and Asansol — a legacy
-                built on faith, academic rigour, and service to community.
+                Operated under the <CBS>Calcutta Boys'School</CBS>  Educational
+                Society, with campuses in Sonarpur, Beleghata, and Asansol — a
+                legacy built on faith, academic rigour, and service to community.
               </motion.p>
 
               <motion.div
@@ -178,7 +196,7 @@ const About = () => {
               </motion.div>
             </div>
 
-            {/* Right — stats, quieter sizing */}
+            {/* Right — stats */}
             <div className="flex flex-col gap-12 shrink-0 pt-1">
               {stats.map((s, i) => (
                 <motion.div
@@ -251,8 +269,8 @@ const About = () => {
               color: "rgba(255,235,195,0.8)",
             }}
           >
-            Calcutta Boys' School is a proud Christian Minority institution,
-            founded in{" "}
+            <CBS>Calcutta Boys'School</CBS>  is a proud Christian Minority
+            institution, founded in{" "}
             <span
               style={{
                 WebkitTextFillColor: "transparent",
@@ -374,7 +392,7 @@ const About = () => {
                       color: "rgba(255,235,195,0.8)",
                     }}
                   >
-                    Calcutta Boys' School
+                    About The School
                   </h2>
                 </div>
                 <motion.button

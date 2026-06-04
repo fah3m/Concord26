@@ -6,6 +6,8 @@ const links = [
   { name: "Home",     path: "/", scrollTo: "home" },
   { name: "About",    path: "/", scrollTo: "about" },
   { name: "Gallery",  path: "/", scrollTo: "gallery" },
+  { name: "Events",   path: "/", scrollTo: "events" },      // ← was missing
+  { name: "Articles", path: "/", scrollTo: "articles" },    // ← move above Sponsors
   { name: "Sponsors", path: "/", scrollTo: "sponsors" },
   { name: "Contact",  path: "/", scrollTo: "contact" },
 ];

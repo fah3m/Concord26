@@ -7,6 +7,7 @@ import Gallery from "./Gallery";
 import Events from "./Events";
 import Contact from "./Contact";
 import Footer from "../rootLayout/Footer";
+import Articles from "./Articles";
 import Sponsors from "./Sponsors";
 
 const ease = [0.16, 1, 0.3, 1];
@@ -262,11 +263,12 @@ const Home = () => {
         <SponsorRibbon />
       </div>
 
-      <div id="about"><About /></div>
-      <div id="gallery"><Gallery /></div>
-      <div id="events"><Events /></div>
-      <div id="sponsors"><Sponsors /></div>
-      <div id="contact"><Contact /></div>
+    <div id="about"><About /></div>
+  <div id="gallery"><Gallery /></div>
+  <div id="events"><Events /></div>
+<div id="articles"><Articles /></div>
+<div id="sponsors"><Sponsors /></div>
+<div id="contact"><Contact /></div>
       <div className="overflow-x-hidden"><Footer /></div>
     </div>
   );

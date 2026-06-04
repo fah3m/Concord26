@@ -23,9 +23,9 @@ const fadeIn = (delay = 0) => ({
 //   filter: "opacity(0.85)" }} />
 const SPONSORS = [
   { name: "Tasty Treats",        logo: "/sponsors/tastytreats.webp" },
-  { name: "Bengal Heritage Fund", logo: null },
-  { name: "Meridian Ventures",    logo: null },
-  { name: "Nova Infra Ltd.",       logo: null },
+  { name: "Pizza Hut", logo:"/sponsors/pizza.webp" },
+  { name: "The Hamper Pamper",    logo: "/sponsors/hamper.webp" },
+  { name: "Popski",       logo:  "/sponsors/popski.webp" },
   { name: "Calcutta Media House", logo: null },
   { name: "Eastgate Capital",     logo: null },
   { name: "Inkwell Press",        logo: null },

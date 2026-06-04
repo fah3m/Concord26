@@ -742,17 +742,7 @@ export default function Gallery() {
           >
             GAL<span style={{ color: "#c27800" }}>L</span>ERY
           </h1>
-          <div className="flex gap-5 mt-3 md:hidden">
-            {["APRIL 18–19, 2026", "EST. 1877", "ANNUAL FEST"].map((t) => (
-              <p
-                key={t}
-                className="font-mono text-[7px] tracking-[0.22em]"
-                style={{ color: "rgba(194,120,0,0.5)" }}
-              >
-                {t}
-              </p>
-            ))}
-          </div>
+
         </div>
         <div className="hidden md:block absolute right-20 bottom-2 text-right">
           {["APRIL 18 – 19, 2026", "EST. 1877", "ANNUAL FEST"].map((t) => (
