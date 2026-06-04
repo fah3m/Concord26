@@ -159,9 +159,6 @@ const Sponsors = () => (
           <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: "rgba(255,190,60,0.35)", flexShrink: 0 }} />
           <div style={{ width: "clamp(30px,6vw,80px)", height: "0.5px", background: "linear-gradient(to left, transparent, rgba(255,190,60,0.3))" }} />
         </div>
-        <p className="font-main text-[0.58rem] tracking-[0.35em] uppercase font-bold" style={{ color: "rgba(255,255,255,0.15)" }}>
-          Interested in sponsoring? Contact us at concord@calcuttaboysschool.edu
-        </p>
       </motion.div>
 
     </div>
