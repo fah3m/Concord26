@@ -29,7 +29,7 @@ const SPONSORS = [
   { name: "Tasty Treats", logo: "/sponsors/tastytreats.webp" },
   { name: "Little Bite",     logo: "/sponsors/little bite.webp" },
   { name: "Capitan Studios",        logo: "/sponsors/capitan.webp" },
-  { name: "Taza TV",       logo: "/sponsors/taza.webp" },
+  { name: "Taaza",       logo: "/sponsors/taza.webp" },
   { name: "Karukrit",          logo: "/sponsors/karukrit.webp" },
   { name: "Grubzz",     logo: "/sponsors/grubzz.webp" },
   { name: "Shree Balaji Jewellers",     logo: "/sponsors/shree.webp" },
