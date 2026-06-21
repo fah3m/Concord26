@@ -22,16 +22,19 @@ const fadeIn = (delay = 0) => ({
 // <img src={logo} alt={name} style={{ height: "100%", width: "auto", objectFit: "contain",
 //   filter: "opacity(0.85)" }} />
 const SPONSORS = [
-  { name: "Tasty Treats",        logo: "/sponsors/tastytreats.webp" },
-  { name: "Pizza Hut", logo:"/sponsors/pizza.webp" },
+  { name: "IDBI Bank",        logo: "/sponsors/idbi.webp" },
+  { name: "Pizza Hut", logo:"/sponsors/pizza.png" },
   { name: "The Hamper Pamper",    logo: "/sponsors/hamper.webp" },
   { name: "Popski",       logo:  "/sponsors/popski.webp" },
-  { name: "Calcutta Media House", logo: null },
-  { name: "Eastgate Capital",     logo: null },
-  { name: "Inkwell Press",        logo: null },
-  { name: "Pinnacle Foods",       logo: null },
-  { name: "Zephyr Tech",          logo: null },
-  { name: "Goldleaf Studios",     logo: null },
+  { name: "Tasty Treats", logo: "/sponsors/tastytreats.webp" },
+  { name: "Little Bite",     logo: "/sponsors/little bite.webp" },
+  { name: "Capitan Studios",        logo: "/sponsors/capitan.webp" },
+  { name: "Taza TV",       logo: "/sponsors/taza.webp" },
+  { name: "Karukrit",          logo: "/sponsors/karukrit.webp" },
+  { name: "Grubzz",     logo: "/sponsors/grubzz.webp" },
+  { name: "Shree Balaji Jewellers",     logo: "/sponsors/shree.webp" },
+  { name: "Graduate Stores",     logo: "/sponsors/graduate.jpg" },
+  { name: "Knitlly",     logo: "/sponsors/tcx.png" },
 ];
 
 const SponsorCard = ({ name, logo, delay = 0 }) => (

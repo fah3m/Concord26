@@ -152,7 +152,7 @@ const About = () => {
                   maxWidth: "42vw",
                 }}
               >
-                Operated under the <CBS>Calcutta Boys'School</CBS>  Educational
+                Operated under the <CBS>Calcutta Boys' School</CBS>  Educational
                 Society, with campuses in Sonarpur, Beleghata, and Asansol — a
                 legacy built on faith, academic rigour, and service to community.
               </motion.p>

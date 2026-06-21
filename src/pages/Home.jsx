@@ -86,7 +86,7 @@ const Home = () => {
           {/* School name */}
           <motion.p
             className="font-bold mb-8"
-            style={{ ...cbs, fontSize: "clamp(0.8rem, 1vw, 1.1rem)", color: "rgba(255,255,255,0.22)", letterSpacing: "0.08em" }}
+            style={{ ...cbs, fontSize: "clamp(.8rem, 2vw, 1.1rem)", color: "rgba(255,255,255,0.22)", letterSpacing: "0.08em" }}
             {...fadeUp(0.05, 10)}
           >
             Calcutta Boys' School
@@ -198,12 +198,12 @@ const Home = () => {
           {/* Text block */}
           <div className="flex flex-col items-center text-center">
             <motion.p
-              className="font-bold mb-2"
-              style={{ ...cbs, fontSize: "0.7rem", color: "rgba(255,255,255,0.22)", letterSpacing: "0.06em" }}
-              {...fadeUp(0.2, 10)}
-            >
-              Calcutta Boys' School
-            </motion.p>
+               className="font-bold mb-2"
+                style={{ ...cbs, fontSize: "clamp(1.2rem, 3.8vw, 1.15rem)", color: "rgba(255,255,255,0.22)", letterSpacing: "0.06em" }}
+                {...fadeUp(0.2, 10)}
+                    >
+                     Calcutta Boys' School
+          </motion.p>
 
             <motion.h1
               className="font-black"
@@ -212,7 +212,7 @@ const Home = () => {
               transition={{ duration: 0.85, delay: 0.3, ease }}
               style={{
                 ...cbs,
-                fontSize: "clamp(3rem, 17vw, 5rem)",
+                fontSize: "clamp(3.5rem, 18vw, 6rem)",
                 lineHeight: 0.88,
                 letterSpacing: "0.02em",
                 WebkitTextFillColor: "transparent",
@@ -263,12 +263,12 @@ const Home = () => {
         <SponsorRibbon />
       </div>
 
-    <div id="about"><About /></div>
-  <div id="gallery"><Gallery /></div>
-  <div id="events"><Events /></div>
-<div id="articles"><Articles /></div>
-<div id="sponsors"><Sponsors /></div>
-<div id="contact"><Contact /></div>
+      <div id="about"><About /></div>
+      <div id="articles"><Articles /></div>
+      <div id="gallery"><Gallery /></div>
+      <div id="sponsors"><Sponsors /></div>
+      <div id="events"><Events /></div>
+      <div id="contact"><Contact /></div>
       <div className="overflow-x-hidden"><Footer /></div>
     </div>
   );
