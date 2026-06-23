@@ -35,6 +35,11 @@ const SPONSORS = [
   { name: "Shree Balaji Jewellers",     logo: "/sponsors/shree.webp" },
   { name: "Graduate Stores",     logo: "/sponsors/graduate.jpg" },
   { name: "Knitlly",     logo: "/sponsors/tcx.png" },
+  { name: "Hollander",     logo: "/sponsors/hollander.webp" },
+  { name: "Nibbles",     logo: "/sponsors/nibbles.webp" },
+  { name: "Dolphin Caterers",     logo: "/sponsors/dolphin.webp" },
+  { name: "Bright Souls",     logo: "/sponsors/bright.webp" },
+  { name: "Bisleri",     logo: "/sponsors/bisleri.png" },
 ];
 
 const SponsorCard = ({ name, logo, delay = 0 }) => (
