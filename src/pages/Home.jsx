@@ -110,7 +110,7 @@ const Home = () => {
               filter: "drop-shadow(0 0 32px rgba(255,120,0,0.6)) drop-shadow(0 0 10px rgba(255,160,30,0.45))",
             }}
           > 
-            Concord 26
+            Concord 2026
           </motion.h1>
 
           {/* Tagline */}
@@ -123,14 +123,31 @@ const Home = () => {
           </motion.p>
 
           {/* Presented By block */}
-          <motion.div className="mt-5 flex flex-col gap-0.5" {...fadeUp(0.4, 10)}>
+          <motion.div className="mt-5 flex flex-col items-start gap-1.5" {...fadeUp(0.4, 10)}>
             <p className="font-main" style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em" }}>
               Presented By
             </p>
-            <p className="font-bold" style={{ fontSize: "0.95rem", color: "rgba(255,210,120,0.85)", letterSpacing: "0.04em" }}>
-              IDBI Bank
-            </p>
-            <p className="font-main" style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em" }}>
+            <img
+              src="/sponsors/idbiii.png"
+              alt="IDBI Bank"
+              draggable="false"
+              style={{
+                width: "clamp(14rem, 18vw, 20rem)",
+                height: "auto",
+                display: "block",
+              }}
+            />
+
+            <p
+              className="font-main"
+              style={{
+                width: "clamp(14rem, 18vw, 20rem)",
+                textAlign: "center",
+                fontSize: "0.9rem",
+                color: "rgba(255,255,255,0.5)",
+                letterSpacing: "0.12em",
+              }}
+            >
               Park Street Branch
             </p>
           </motion.div>
@@ -235,7 +252,7 @@ const Home = () => {
                 filter: "drop-shadow(0 0 20px rgba(255,120,0,0.5)) drop-shadow(0 0 6px rgba(255,160,30,0.35))",
               }}
             >
-              Concord 26
+              Concord 2026
             </motion.h1>
 
             <motion.p
@@ -247,14 +264,30 @@ const Home = () => {
             </motion.p>
 
             {/* Presented By block */}
-            <motion.div className="mt-3 flex flex-col items-center gap-0.5" {...fadeUp(0.45, 10)}>
+            <motion.div className="mt-3 flex flex-col items-center gap-1.5" {...fadeUp(0.45, 10)}>
               <p className="font-main" style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.04em" }}>
                 Presented By
               </p>
-              <p className="font-bold" style={{ fontSize: "0.78rem", color: "rgba(255,210,120,0.85)", letterSpacing: "0.04em" }}>
-                IDBI Bank
-              </p>
-              <p className="font-main" style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.04em" }}>
+              <img
+                src="/sponsors/idbiii.png"
+                alt="IDBI Bank"
+                draggable="false"
+                style={{
+                  width: "clamp(16rem, 65vw, 22rem)",
+                  height: "auto",
+                  display: "block",
+                }}
+              />
+              <p
+                className="font-main"
+                style={{
+                  width: "clamp(16rem, 65vw, 22rem)",
+                  textAlign: "center",
+                  fontSize: "0.95rem",
+                  color: "rgba(255,255,255,0.5)",
+                  letterSpacing: "0.1em",
+                }}
+              >
                 Park Street Branch
               </p>
             </motion.div>
