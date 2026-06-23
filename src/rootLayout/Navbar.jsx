@@ -5,9 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const links = [
   { name: "Home",     path: "/", scrollTo: "home" },
   { name: "About",    path: "/", scrollTo: "about" },
+  { name: "Articles", path: "/", scrollTo: "articles" },
   { name: "Gallery",  path: "/", scrollTo: "gallery" },
-  { name: "Events",   path: "/", scrollTo: "events" },      // ← was missing
-  { name: "Articles", path: "/", scrollTo: "articles" },    // ← move above Sponsors
   { name: "Sponsors", path: "/", scrollTo: "sponsors" },
   { name: "Contact",  path: "/", scrollTo: "contact" },
 ];
@@ -80,7 +79,8 @@ export default function Navbar() {
       }, 100);
     }
 
-    const sections = ["home", "about", "gallery", "events", "sponsors", "contact"];
+    // Order matches actual page layout top-to-bottom
+    const sections = ["home", "about", "articles", "gallery", "sponsors",  "events",  "contact"];
     const onScroll = () => {
       const trigger = window.innerHeight * 0.4;
       let current = "home";
@@ -105,13 +105,17 @@ export default function Navbar() {
     requestAnimationFrame(() => {
       let idx;
       if (location.pathname === "/") {
-        const sectionToIdx = { home: 0, about: 1, gallery: 2, sponsors: 3, contact: 4 };
-        idx = activeSection === "events" ? -1 : (sectionToIdx[activeSection] ?? 0);
+        // Find index directly from the links array instead of a
+        // hand-maintained position map — avoids drift when links change.
+        idx = links.findIndex((l) => l.scrollTo === activeSection);
       } else {
         idx = links.findIndex((l) => !l.scrollTo && l.path === location.pathname);
       }
 
       if (idx === -1) {
+        // activeSection is "events" (or anything not in `links`, e.g. null
+        // on non-home routes) — collapse the pill, the amber CTA button
+        // handles its own highlight state separately.
         setPillStyle((prev) => ({ ...prev, width: 0 }));
         return;
       }

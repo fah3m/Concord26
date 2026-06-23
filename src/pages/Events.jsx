@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ease = [0.16, 1, 0.3, 1];
@@ -134,12 +134,29 @@ const SectionLabel = ({ label, count }) => (
 
 const EventCard = ({ event, index, category, animDelay }) => {
   const num = String(index + 1).padStart(2, "0");
+  const [basketClicks, setBasketClicks] = useState(0);
+  const [showBasketballs, setShowBasketballs] = useState(false);
+
+  useEffect(() => {
+    if (basketClicks === 3) {
+      setShowBasketballs(true);
+
+      setTimeout(() => {
+        setShowBasketballs(false);
+        setBasketClicks(0);
+      }, 3000);
+    }
+  }, [basketClicks]);
+
   const catLabel =
     category === "stage"
       ? "Stage"
       : category === "field"
         ? "Field"
         : "Off Stage";
+
+  const isBasketball = event.n.includes("Basketball");
+  const basketballMode = isBasketball && showBasketballs;
 
   return (
     <motion.div
@@ -148,6 +165,10 @@ const EventCard = ({ event, index, category, animDelay }) => {
         border: "1px solid rgba(255,190,60,0.06)",
         background: "rgba(255,255,255,0.015)",
         transition: "background 0.25s, border-color 0.25s",
+        minHeight: basketballMode ? "96px" : undefined,
+        display: basketballMode ? "flex" : undefined,
+        alignItems: basketballMode ? "center" : undefined,
+        justifyContent: basketballMode ? "center" : undefined,
       }}
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
@@ -161,59 +182,81 @@ const EventCard = ({ event, index, category, animDelay }) => {
         e.currentTarget.style.borderColor = "rgba(255,190,60,0.06)";
       }}
     >
-      {/* Hover glow */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300"
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(255,140,10,0.06) 0%, transparent 60%)",
-        }}
-      />
+      {basketballMode ? (
+        // ── Basketball-only reveal: nothing else shown ──
+        <div
+          className="text-3xl cursor-pointer"
+          onClick={() => setBasketClicks((prev) => prev + 1)}
+        >
+          🏀 🏀 🏀
+        </div>
+      ) : (
+        <>
+          {/* Hover glow */}
+          <div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,140,10,0.06) 0%, transparent 60%)",
+            }}
+          />
 
-      {/* Number row */}
-      <div className="flex items-center gap-2 mb-3">
-        <span
-          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-          style={{ background: "rgba(255,190,60,0.4)" }}
-        />
-        <span className="font-main text-[0.52rem] tracking-[0.4em] uppercase text-amber-400/35 font-bold">
-          {num}
-        </span>
-        <span className="font-main text-[0.48rem] tracking-[0.38em] uppercase text-amber-400/30 font-bold ml-auto">
-          {catLabel}
-        </span>
-      </div>
+          {/* Number row */}
+          <div className="flex items-center gap-2 mb-3">
+            <span
+              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+              style={{ background: "rgba(255,190,60,0.4)" }}
+            />
+            <span className="font-main text-[0.52rem] tracking-[0.4em] uppercase text-amber-400/35 font-bold">
+              {num}
+            </span>
+            <span className="font-main text-[0.48rem] tracking-[0.38em] uppercase text-amber-400/30 font-bold ml-auto">
+              {catLabel}
+            </span>
+          </div>
 
-      {/* Event name */}
-      <p
-        className="font-main text-[0.92rem] tracking-[0.12em] uppercase font-bold leading-tight mb-1.5"
-        style={{ color: "rgba(255,255,255,0.72)" }}
-      >
-        {event.n}
-      </p>
+          {/* Event name */}
+          <div>
+            <p
+              className="font-main text-[0.92rem] tracking-[0.12em] uppercase font-bold leading-tight mb-1.5"
+              style={{
+                color: "rgba(255,255,255,0.72)",
+                cursor: isBasketball ? "pointer" : "default",
+              }}
+              onClick={() => {
+                if (isBasketball) {
+                  setBasketClicks((prev) => prev + 1);
+                }
+              }}
+            >
+              {event.n}
+            </p>
+          </div>
 
-      {/* Codename */}
-      <p
-        className="font-main text-[0.62rem] tracking-[0.3em] uppercase font-bold"
-        style={{ color: "rgba(255,190,60,0.6)", fontStyle: "italic" }}
-      >
-        {event.code}
-      </p>
+          {/* Codename */}
+          <p
+            className="font-main text-[0.62rem] tracking-[0.3em] uppercase font-bold"
+            style={{ color: "rgba(255,190,60,0.6)", fontStyle: "italic" }}
+          >
+            {event.code}
+          </p>
 
-      {/* Corner bracket */}
-      <svg
-        className="absolute bottom-2.5 right-3 opacity-20 group-hover:opacity-50 transition-opacity duration-300"
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-      >
-        <path
-          d="M12 0 L12 12 L0 12"
-          stroke="rgba(255,190,60,0.9)"
-          strokeWidth="1"
-        />
-      </svg>
+          {/* Corner bracket */}
+          <svg
+            className="absolute bottom-2.5 right-3 opacity-20 group-hover:opacity-50 transition-opacity duration-300"
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+          >
+            <path
+              d="M12 0 L12 12 L0 12"
+              stroke="rgba(255,190,60,0.9)"
+              strokeWidth="1"
+            />
+          </svg>
+        </>
+      )}
     </motion.div>
   );
 };
