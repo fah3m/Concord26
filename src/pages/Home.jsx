@@ -110,7 +110,7 @@ const Home = () => {
             className="font-bold mb-8"
             style={{
               ...cbs,
-              fontSize: "clamp(1.3rem, 3vw, 1.8rem)",
+              fontSize: "clamp(1.3rem, 2.7vw, 1.5rem)",
               color: "rgba(255,255,255,0.55)",
               letterSpacing: "0.08em",
             }}
@@ -127,7 +127,7 @@ const Home = () => {
             transition={{ duration: 0.85, delay: 0.18, ease }}
             style={{
               ...cbs,
-              fontSize: "clamp(4.8rem, 11.5vw, 10.5rem)",
+              fontSize: "clamp(4rem, 10vw, 7.5rem)",
               lineHeight: 0.88,
               letterSpacing: "0.02em",
               WebkitTextFillColor: "transparent",
@@ -144,10 +144,9 @@ const Home = () => {
 
           {/* Tagline */}
           <motion.p
-            className="font-bold mt-4"
+            className="font-main mt-4"
             style={{
-              ...cbs,
-              fontSize: "clamp(1.3rem, 2vw, 1.9rem)",
+              fontSize: "clamp(.7rem, 1.3vw, 1rem)",
               color: "rgba(255,255,255,0.7)",
               letterSpacing: "0.06em",
             }}
@@ -392,10 +391,10 @@ const Home = () => {
           {/* Text block */}
           <div className="flex flex-col items-center text-center">
             <motion.p
-              className="font-bold mb-2"
+              className=" mb-2"
               style={{
                 ...cbs,
-                fontSize: "clamp(1.6rem, 5.5vw, 1.9rem)",
+                fontSize: "clamp(1rem, 4vw, 1.2rem)",
                 color: "rgba(255,255,255,0.55)",
                 letterSpacing: "0.06em",
               }}
@@ -411,7 +410,7 @@ const Home = () => {
               transition={{ duration: 0.85, delay: 0.3, ease }}
               style={{
                 ...cbs,
-                fontSize: "clamp(3.5rem, 18vw, 6rem)",
+                fontSize: "clamp(3rem, 12vw, 4rem)",
                 lineHeight: 0.88,
                 letterSpacing: "0.02em",
                 WebkitTextFillColor: "transparent",
@@ -427,7 +426,7 @@ const Home = () => {
             </motion.h1>
 
             <motion.p
-              className="font-bold mt-3"
+              className="mt-3"
               style={{
                 ...cbs,
                 fontSize: "1.15rem",
@@ -459,7 +458,7 @@ const Home = () => {
                 alt="IDBI Bank"
                 draggable="false"
                 style={{
-                  width: "clamp(16rem, 65vw, 22rem)",
+                  width: "clamp(14rem, 60vw, 20rem)",
                   height: "auto",
                   display: "block",
                 }}
@@ -467,9 +466,9 @@ const Home = () => {
               <p
                 className="font-main"
                 style={{
-                  width: "clamp(16rem, 65vw, 22rem)",
+                  width: "clamp(12rem, 60vw, 22rem)",
                   textAlign: "center",
-                  fontSize: "0.95rem",
+                  fontSize: "0.8rem",
                   color: "rgba(255,255,255,0.5)",
                   letterSpacing: "0.1em",
                 }}
