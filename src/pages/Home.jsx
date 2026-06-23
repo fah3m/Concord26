@@ -86,7 +86,7 @@ const Home = () => {
           {/* School name */}
           <motion.p
             className="font-bold mb-8"
-            style={{ ...cbs, fontSize: "clamp(.8rem, 2vw, 1.1rem)", color: "rgba(255,255,255,0.22)", letterSpacing: "0.08em" }}
+            style={{ ...cbs, fontSize: "clamp(1.3rem, 3vw, 1.8rem)", color: "rgba(255,255,255,0.55)", letterSpacing: "0.08em" }}
             {...fadeUp(0.05, 10)}
           >
             Calcutta Boys' School
@@ -109,18 +109,31 @@ const Home = () => {
               backgroundImage: "linear-gradient(115deg, rgba(255,140,10,1) 0%, rgba(255,195,60,1) 18%, rgba(255,225,130,1) 35%, rgba(255,255,255,0.97) 55%, rgba(255,240,200,0.85) 100%)",
               filter: "drop-shadow(0 0 32px rgba(255,120,0,0.6)) drop-shadow(0 0 10px rgba(255,160,30,0.45))",
             }}
-          >
-            Concord
+          > 
+            Concord 26
           </motion.h1>
 
           {/* Tagline */}
           <motion.p
             className="font-bold mt-4"
-            style={{ ...cbs, fontSize: "clamp(0.85rem, 1.1vw, 1.2rem)", color: "rgba(255,255,255,0.38)", letterSpacing: "0.06em" }}
+            style={{ ...cbs, fontSize: "clamp(1.3rem, 2vw, 1.9rem)", color: "rgba(255,255,255,0.7)", letterSpacing: "0.06em" }}
             {...fadeUp(0.32, 10)}
           >
             Resurge. Reclaim. Reign.
           </motion.p>
+
+          {/* Presented By block */}
+          <motion.div className="mt-5 flex flex-col gap-0.5" {...fadeUp(0.4, 10)}>
+            <p className="font-main" style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em" }}>
+              Presented By
+            </p>
+            <p className="font-bold" style={{ fontSize: "0.95rem", color: "rgba(255,210,120,0.85)", letterSpacing: "0.04em" }}>
+              IDBI Bank
+            </p>
+            <p className="font-main" style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em" }}>
+              Park Street Branch
+            </p>
+          </motion.div>
 
           {/* Thin divider */}
           <motion.div className="flex items-center gap-3 mt-8 mb-8" {...fadeIn(0.42)}>
@@ -199,7 +212,7 @@ const Home = () => {
           <div className="flex flex-col items-center text-center">
             <motion.p
                className="font-bold mb-2"
-                style={{ ...cbs, fontSize: "clamp(1.2rem, 3.8vw, 1.15rem)", color: "rgba(255,255,255,0.22)", letterSpacing: "0.06em" }}
+                style={{ ...cbs, fontSize: "clamp(1.6rem, 5.5vw, 1.9rem)", color: "rgba(255,255,255,0.55)", letterSpacing: "0.06em" }}
                 {...fadeUp(0.2, 10)}
                     >
                      Calcutta Boys' School
@@ -222,16 +235,29 @@ const Home = () => {
                 filter: "drop-shadow(0 0 20px rgba(255,120,0,0.5)) drop-shadow(0 0 6px rgba(255,160,30,0.35))",
               }}
             >
-              Concord
+              Concord 26
             </motion.h1>
 
             <motion.p
               className="font-bold mt-3"
-              style={{ ...cbs, fontSize: "0.72rem", color: "rgba(255,255,255,0.35)", letterSpacing: "0.05em" }}
+              style={{ ...cbs, fontSize: "1.15rem", color: "rgba(255,255,255,0.7)", letterSpacing: "0.05em" }}
               {...fadeUp(0.4, 10)}
             >
               Resurge. Reclaim. Reign.
             </motion.p>
+
+            {/* Presented By block */}
+            <motion.div className="mt-3 flex flex-col items-center gap-0.5" {...fadeUp(0.45, 10)}>
+              <p className="font-main" style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.04em" }}>
+                Presented By
+              </p>
+              <p className="font-bold" style={{ fontSize: "0.78rem", color: "rgba(255,210,120,0.85)", letterSpacing: "0.04em" }}>
+                IDBI Bank
+              </p>
+              <p className="font-main" style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.04em" }}>
+                Park Street Branch
+              </p>
+            </motion.div>
           </div>
 
           {/* Event info */}
