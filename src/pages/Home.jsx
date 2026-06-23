@@ -192,7 +192,10 @@ const Home = () => {
         </motion.div>
 
         {/* ── MOBILE ── */}
-        <div className="lg:hidden absolute inset-x-0 top-0 bottom-0 z-10 flex flex-col justify-between py-[2svh] px-5">
+        <div
+  className="lg:hidden absolute inset-x-0 top-0 z-10 flex flex-col justify-between px-5"
+  style={{ top: "2svh", bottom: "clamp(56px, 9svh, 70px)" }}
+>
 
           {/* Top bar */}
           <motion.div className="flex justify-between items-center" {...fadeUp(0.05, 10)}>
